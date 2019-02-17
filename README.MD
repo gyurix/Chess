@@ -9,8 +9,11 @@
 
 Chess is a Java implementation of the popular chess game.
 It's a desktop application supporting multiplayer chess games through the internet connection.
+Our application will not suport real game between two players!
 
 ## Features
+
+- **Users list:** List of all users with their registration date and role in application (admin or user).
 
 - **Registration system:** Players can register to the application as a new players. (+) They will take begining ELO (?1600 or 1000?).
 
