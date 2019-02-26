@@ -17,22 +17,22 @@ CREATE TABLE Duration(
 
 CREATE TABLE Rank(
   id SERIAL PRIMARY KEY,
-  name CHAR[16]
+  name text
 );
 
 CREATE TABLE UserProfile(
   id SERIAL PRIMARY KEY,
-  nick CHAR[16],
-  first_name VARCHAR[32],
-  last_name VARCHAR[32],
-  pwd_hash CHAR[64],
+  nick text,
+  first_name text,
+  last_name text,
+  pwd_hash text,
   rank INT REFERENCES Rank(id) ON UPDATE CASCADE ON DELETE RESTRICT,
   registered TIMESTAMP
 );
 
 CREATE TABLE Championship(
   id SERIAL PRIMARY KEY,
-  name CHAR[16],
+  name text,
   duration INT REFERENCES Duration(id) ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
@@ -47,7 +47,7 @@ CREATE TYPE WinnerType AS ENUM ('DRAW', 'P1', 'P2');
 
 CREATE TABLE League(
   id SERIAL PRIMARY KEY,
-  name CHAR[16],
+  name text,
   duration INT REFERENCES Championship(id) ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
@@ -68,6 +68,6 @@ CREATE TABLE Game(
 
 CREATE TABLE Permission(
   id SERIAL PRIMARY KEY,
-  name CHAR[16],
+  name text,
   rank INT REFERENCES Rank(id) ON UPDATE CASCADE ON DELETE RESTRICT
 );
