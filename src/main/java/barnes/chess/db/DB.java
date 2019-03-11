@@ -1,18 +1,21 @@
 package barnes.chess.db;
 
 import barnes.chess.utils.ErrorAcceptedConsumer;
-import barnes.chess.utils.ErrorAcceptedRunnable;
+import lombok.Getter;
 
 import java.sql.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
+import static barnes.chess.utils.ThreadUtil.async;
 
 public class DB {
+  @Getter
+  private static DB instance;
   private final DatabaseConfig config;
-  private final ExecutorService executor = Executors.newCachedThreadPool();
   private Connection connection;
 
   public DB(DatabaseConfig config) {
+    if (instance != null)
+      throw new RuntimeException("DB can only be created once.");
     this.config = config;
   }
 
@@ -30,15 +33,11 @@ public class DB {
   }
 
   public void command(ErrorAcceptedConsumer<Boolean> resultHandler, String query, Object... data) {
-    execute(() -> resultHandler.accept(prepare(query, data).execute()));
+    async(() -> resultHandler.accept(prepare(query, data).execute()));
   }
 
   public void command(String query, Object... data) {
-    execute(() -> prepare(query, data).execute());
-  }
-
-  private void execute(ErrorAcceptedRunnable runnable) {
-    executor.execute(runnable.toRunnable());
+    async(() -> prepare(query, data).execute());
   }
 
   private PreparedStatement prepare(String query, Object... data) throws SQLException {
@@ -50,14 +49,14 @@ public class DB {
   }
 
   public void query(ErrorAcceptedConsumer<ResultSet> resultHandler, String query, Object... data) {
-    execute(() -> resultHandler.accept(prepare(query, data).executeQuery()));
+    async(() -> resultHandler.accept(prepare(query, data).executeQuery()));
   }
 
   public void update(String query, Object... data) {
-    execute(() -> prepare(query, data).executeUpdate());
+    async(() -> prepare(query, data).executeUpdate());
   }
 
   public void update(ErrorAcceptedConsumer<Integer> resultHandler, String query, Object... data) {
-    execute(() -> resultHandler.accept(prepare(query, data).executeUpdate()));
+    async(() -> resultHandler.accept(prepare(query, data).executeUpdate()));
   }
 }
