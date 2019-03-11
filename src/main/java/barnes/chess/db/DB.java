@@ -16,6 +16,7 @@ public class DB {
   public DB(DatabaseConfig config) {
     if (instance != null)
       throw new RuntimeException("DB can only be created once.");
+    instance = this;
     this.config = config;
   }
 
@@ -58,5 +59,16 @@ public class DB {
 
   public void update(ErrorAcceptedConsumer<Integer> resultHandler, String query, Object... data) {
     async(() -> resultHandler.accept(prepare(query, data).executeUpdate()));
+  }
+
+  public void shutdown() {
+    if (connection != null) {
+      try {
+        connection.close();
+        connection = null;
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+    }
   }
 }
