@@ -63,7 +63,12 @@ public class AbstractEntity {
   }
 
   public void insert() {
-    DB.getInstance().query((rs) -> this.id = rs.getInt(1),
+    DB.getInstance().query((rs) -> {
+              rs.next();
+              id = rs.getInt(1);
+              System.out.println("Inserted " + getTable() + " #" + id);
+              rs.close();
+            },
             "INSERT INTO " + getTable() + "  (" + fieldNames + ")" +
                     "VALUES (" + fieldValuePlaceholders + ") RETURNING id", getFieldValues());
   }
@@ -72,7 +77,9 @@ public class AbstractEntity {
     try {
       id = rs.getInt("id");
       for (Field f : fields) {
-        f.set(this, rs.getObject(f.getName()));
+        Object o = rs.getObject(f.getName());
+        if (o != null)
+          f.set(this, o);
       }
     } catch (Throwable e) {
       e.printStackTrace();
@@ -80,6 +87,6 @@ public class AbstractEntity {
   }
 
   public void update(String key, Object value) {
-    DB.getInstance().update("UPDATE " + getTable() + " WHERE " + key + " = ?", value);
+    DB.getInstance().update("UPDATE " + getTable() + " SET " + key + " = ? WHERE id = ?", value, id);
   }
 }

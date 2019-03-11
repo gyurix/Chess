@@ -1,6 +1,8 @@
 package barnes.chess.gui.screens;
 
 import barnes.chess.ChessLauncher;
+import barnes.chess.db.entity.UserProfile;
+import barnes.chess.utils.HashUtils;
 import javafx.geometry.HPos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -14,6 +16,8 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+
+import static barnes.chess.utils.HashUtils.HashType.SHA_256;
 
 public class LoginScreen extends AbstractScreen {
   private Button loginButton;
@@ -94,7 +98,25 @@ public class LoginScreen extends AbstractScreen {
 
   private void loginButtonClicked(Object o) {
     System.out.println("Logging in...");
-    new DashboardScreen(stage);
+    if (usernameField.getText().isEmpty()) {
+      showError("No Username", "You did not enter your username");
+      return;
+    }
+    if (passwordField.getText().isEmpty()) {
+      showError("No Password", "You did not enter your password");
+      return;
+    }
+    UserProfile.with(usernameField.getText(), (p) -> {
+      if (p == null) {
+        showError("User not found", "User " + usernameField.getText() + " was not found");
+        return;
+      }
+      if (!p.getPwd_hash().equals(HashUtils.hash(passwordField.getText(), SHA_256))) {
+        showError("Wrong Password", "The entered password is incorrect.");
+        return;
+      }
+      new DashboardScreen(stage, p);
+    });
   }
 
   private void loginEnterPressed(KeyEvent e) {

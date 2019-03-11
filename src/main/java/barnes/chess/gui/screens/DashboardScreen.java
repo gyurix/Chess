@@ -1,11 +1,15 @@
 package barnes.chess.gui.screens;
 
+import barnes.chess.db.entity.UserProfile;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 public class DashboardScreen extends AbstractScreen {
-  public DashboardScreen(Stage stage) {
+  private UserProfile user;
+
+  public DashboardScreen(Stage stage, UserProfile user) {
     super(stage);
+    this.user = user;
   }
   //TODO Implement Dashboard Screen functionality
 

@@ -34,6 +34,6 @@ public class ChessLauncher extends Application {
         System.out.println(r.getInt(1) + ": " + r.getString(2));
       }
     }, "SELECT * FROM rank");
-    new LoginScreen(new Stage());
+    new LoginScreen(stage);
   }
 }
