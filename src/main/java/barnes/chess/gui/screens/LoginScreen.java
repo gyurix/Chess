@@ -10,6 +10,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -38,7 +39,7 @@ public class LoginScreen extends AbstractScreen {
 
   @Override
   protected int getHeight() {
-    return 360;
+    return 328;
   }
 
   @Override
@@ -57,19 +58,20 @@ public class LoginScreen extends AbstractScreen {
     passwordField = new PasswordField();
 
     loginButton = new Button("Login");
-    loginButton.setFont(Font.font(16));
+    loginButton.setFont(Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 16));
     loginButton.setMaxWidth(10000);
     loginButton.setTextAlignment(TextAlignment.CENTER);
 
     noAccountYetLabel = new Label("Don't have an account yet?\n" +
             "Click here to register");
-    noAccountYetLabel.setFont(Font.font(14));
+    noAccountYetLabel.setFont(Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 14));
     noAccountYetLabel.setTextAlignment(TextAlignment.CENTER);
   }
 
   @Override
   protected void initGrid() {
     super.initGrid();
+    grid.setVgap(30);
     grid.getColumnConstraints().addAll(col(30, HPos.RIGHT), col(40, HPos.LEFT), col(30));
   }
 
