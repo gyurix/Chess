@@ -12,27 +12,27 @@ spolužiakom / spolužiačkou použijete git.
 
 ## 1. Registračný a prihlasovací systém
 
-V prvom scenáre sme implementovali systém na registrácie používateľov, ako aj na
+V prvom scenári sme implementovali systém na registráciu používateľov, ako aj na
 prihlásovanie.
 
-Pri spúsťanie programu používateľ potrebuje prihlásiť do systému s použitým nasledujúceho
+Pri spúsťaní programu sa používateľ potrebuje prihlásiť do systému s použitým nasledujúceho
 formulára:
 
 ![Prihlasovací formulár](https://github.com/fiit-dbs-2019/dbs2019-project-assignment-barath-nestorenko/raw/master/doc/img/Login.png)
 
-Keď ešte nemá účet, môže registrovať použitým nasledujúceho formulára:
+Keď ešte nemá účet, môže registrovať použitím nasledovného formulára:
 
 ![Registračný formulár](https://github.com/fiit-dbs-2019/dbs2019-project-assignment-barath-nestorenko/raw/master/doc/img/Register.png)
 
-Pri prihlásení program kontroluje SHA-256 hash zadaného hesla. Keď to zhoduje s heslom v databáze,
-tak sa ukáže dashboard, čo bude implementovaný v nasledujúcich scenároch.
+Pri prihlásení program kontroluje SHA-256 hash zadaného hesla. Keď sa zhoduje s heslom v databáze,
+ukáže sa dashboard, ktorý bude implementovaný v nasledujúcich scenároch.
 
-Pri registrácii program uverí unikátnosť prihlasovacej mene, ako aj emailovej adrese.
-Keď nenájde žiadne rovnaké údaje v databáze, len vtedy povolí registráciu.
+Pri registrácii program uverí jedinečnosť prihlasovacieho mena, ako aj emailovej adresy.
+Keď nenájde rovnaké údaje v databáze, povolí registráciu.
 
 ## 2. Výber používateľa a nastavenie jeho role
 
-## 3. Prehľadávateľny zoznam hier, kde používateľ participoval
+## 3. Prehľadávateľný zoznam hier,  na ktorých používateľ participoval
 
 ## 4. Štatistiky hráča a administrácia líg
 
@@ -52,23 +52,23 @@ Keď nenájde žiadne rovnaké údaje v databáze, len vtedy povolí registráci
 ## Opis entitou
 
 - **UserProfile:** Profil jedného používateľa systému
-- **Rank:** Štatult používateľa systému, pri štatultoch sú priradené viacere práva
-- **Permission:** Právo na vykonanie jednej funkcionalite systému
-- **Friendship:** Prijateľské pripojenie medzi dvoch používateľou systému
-- **Duration:** Čas začiatku a koncu nejakej akcie
+- **Rank:** Štatút používateľa systému, pri štatútoch sú priradené viaceré práva
+- **Permission:** Právo na použitie jednej časti systému
+- **Friendship:** Priateľské pripojenie medzi dvoma používateľmi systému
+- **Duration:** Čas začiatku a konca nejakej akcie
 - **LeaguePlayer:** Profil hráča v jednej lige
-- **Game:** Informácie o jednu hru
+- **Game:** Informácie o jednej hre
 - **League:** Liga v jednom majstrovstve
-- **Championship:** Údaje o jednej majstrovstve
+- **Championship:** Údaje o jednom majstrovstve
 
 ## Rozdiel medzi fyzickým a logickým dátovým modelom
 
-Na umožnenie pripájanie user profilou k viacero líg ako aj jeden líg k viacermi user profilmi,
-pridali sme entitu **LeaguePlayer**. Pridali sme aj unikátne kľúče ku každej entitám, ako aj
+Na umožnenie pripájania user profilov k viacerým ligám ako aj jednej ligy k viacerým user profilom,
+sme pridali  entitu **LeaguePlayer**. Pridali sme aj unikátne kľúče ku každej entite, ako aj
 potrebné cudzie kľúče k entitám na zabezpečenie funkčného pripojenia medzi nimi.     
  
 # Programovateľské prostredie
-Program je implementovaný v programovacom jazyku **Java 8** a spracuje s
+Program je implementovaný v programovacom jazyku **Java 8** a pracuje s
 **Posgresql** databázou.
 
 Na komunikáciu s databázou je použitá knižnica `postgresql 42.2.5`.
@@ -80,40 +80,40 @@ Na spracovávanie knižníc používame **Maven**.
 # Hlavné časti programu
 
 Každá hlavná časť programu sa nachádza v odlišnom balíku.
-Každý balík sa začína s názvom `barnes.chess.` a potom máme názov funkcionalite
+Každý balík sa začína s názvom `barnes.chess.` a potom máme názov funkcionality
 
 ## db
 Obsahuje triedy na prácu s databázou.
 Máme tam nasledovné dôležité triedy:
 - Trieda `DatabaseConfig`, ktorá obsahuje nastavenia databázového pripojenia;
-- Trieda `DB`, ktorý funguje ako wrapper posgresql connectoru a slúži na
-zabezpečenie pohodlnej asynchrónnej práci s databázou.
+- Trieda `DB`, ktorá funguje ako wrapper posgresql connectoru a slúži na
+zabezpečenie pohodlnej asynchrónnej práce s databázou.
 
-Odstatné triedy tam sa nachádzajú v podbalíku `entity` a slúžia
+Ostatné triedy sa nachádzajú v podbalíku `entity` a slúžia
 na implementáciu funkcionality, ktoré robíme s tabuľkami v databáze.
 - Abstraktná trieda `AbstractEntity` poskytuje
-pomocné funkcie na vygenerovanie príkazou na načítanie, modifikácie
-a uloženie atribúty entitou do databáze.
+pomocné funkcie na vygenerovanie príkazov na načítanie, modifikáciu
+a uloženie atribútov entity do databázy.
 
 ## gui
 
-Obsahuje triedy slúžiace na riešie funkcionality používateľského rozhrania.
+Obsahuje triedy slúžiace na riešenie funkcionality používateľského rozhrania.
 
 Trieda `ResourceManager` slúži na spracovávanie externými zdrojmi, ktoré
 sú použité na používateľskom rozhraní. Tieto zdroje sú napríklad ikony
 jednotlivých možností aplikácie, ako aj hlavná ikona aplikácie.
 
-Ostatné triedy sa nachádzajú v podbalíke `screens` a slúžia na
-spracovávanie funkcionality jednej obrazovke, ako napr. registrácia,
+Ostatné triedy sa nachádzajú v podbalíku `screens` a slúžia na
+spracovávanie funkcionality jednej obrazovky, ako napr. registrácia,
 prihlásenie, dashboard atď.
 
 Abstraktná trieda `AbstractScreen` slúži na poskytnutie pomocných
-funkcií na vytváranie **JavaFX** komponentov, na štruktúralizáciu ich spracovávanie
+funkcií na vytváranie **JavaFX** komponentov, na štruktúralizáciu ich spracovávania
 ako aj možnosť na vytváranie chybových okien.
 
 ## utils
 
-Poskytuje pomocné triedy na riešenie univerzálnych problémov v softvéru.
+Poskytuje pomocné triedy na riešenie univerzálnych problémov v softvéri.
 
 Obsahujú napríklad hashovacie funkcie a funkcie na prepínanie medzi UI a asynchrónne vlákna.
 
