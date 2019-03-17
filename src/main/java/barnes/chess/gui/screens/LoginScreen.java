@@ -4,10 +4,7 @@ import barnes.chess.ChessLauncher;
 import barnes.chess.db.entity.UserProfile;
 import barnes.chess.utils.HashUtils;
 import javafx.geometry.HPos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -51,25 +48,9 @@ public class LoginScreen extends AbstractScreen {
     return 480;
   }
 
-  @Override
-  protected void initComponents() {
-    usernameLabel = new Label("Username");
-    usernameLabel.setFont(Font.font(16));
-    usernameField = new TextField();
-
-    passwordLabel = new Label("Password");
-    passwordLabel.setFont(Font.font(16));
-    passwordField = new PasswordField();
-
-    loginButton = new Button("Login");
-    loginButton.setFont(Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 16));
-    loginButton.setMaxWidth(10000);
-    loginButton.setTextAlignment(TextAlignment.CENTER);
-
-    noAccountYetLabel = new Label("Don't have an account yet?\n" +
-            "Click here to register");
-    noAccountYetLabel.setFont(Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 14));
-    noAccountYetLabel.setTextAlignment(TextAlignment.CENTER);
+  private void enterPressed(KeyEvent e) {
+    if (e.getCode() == KeyCode.ENTER)
+      loginButtonClicked(e);
   }
 
   @Override
@@ -90,9 +71,24 @@ public class LoginScreen extends AbstractScreen {
   }
 
   @Override
+  protected void initComponents() {
+    usernameLabel = createLabel("Username", 16);
+    usernameField = new TextField();
+
+    passwordLabel = createLabel("Password", 16);
+    passwordField = new PasswordField();
+
+    loginButton = createButton("Login", this::loginButtonClicked);
+
+    noAccountYetLabel = new Label("Don't have an account yet?\n" +
+            "Click here to register");
+    noAccountYetLabel.setFont(Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 14));
+    noAccountYetLabel.setTextAlignment(TextAlignment.CENTER);
+  }
+
+  @Override
   protected void registerEvents() {
-    loginButton.setOnAction(this::loginButtonClicked);
-    scene.setOnKeyPressed(this::loginEnterPressed);
+    scene.setOnKeyPressed(this::enterPressed);
     noAccountYetLabel.setOnMouseClicked(this::noAccountYetClicked);
   }
 
@@ -106,7 +102,9 @@ public class LoginScreen extends AbstractScreen {
       showError("No Password", "You did not enter your password");
       return;
     }
+    Alert info = showInfo("Logging in...", "Logging in, please wait...");
     UserProfile.with(usernameField.getText(), (p) -> {
+      info.close();
       if (p == null) {
         showError("User not found", "User " + usernameField.getText() + " was not found");
         return;
@@ -117,11 +115,6 @@ public class LoginScreen extends AbstractScreen {
       }
       new DashboardScreen(stage, p);
     });
-  }
-
-  private void loginEnterPressed(KeyEvent e) {
-    if (e.getCode() == KeyCode.ENTER)
-      loginButtonClicked(e);
   }
 
   private void noAccountYetClicked(MouseEvent e) {

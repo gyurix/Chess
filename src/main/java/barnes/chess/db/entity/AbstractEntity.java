@@ -1,6 +1,8 @@
 package barnes.chess.db.entity;
 
 import barnes.chess.db.DB;
+import barnes.chess.utils.ErrorAcceptedRunnable;
+import barnes.chess.utils.ThreadUtil;
 
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
@@ -62,12 +64,14 @@ public abstract class AbstractEntity {
     fieldValuePlaceholders = valuePlaceholderOut.substring(1);
   }
 
-  public void insert() {
+  public void insert(ErrorAcceptedRunnable runnable) {
     DB.getInstance().query((rs) -> {
               rs.next();
               id = rs.getInt(1);
               System.out.println("Inserted " + getTable() + " #" + id);
               rs.close();
+              if (runnable != null)
+                ThreadUtil.ui(runnable);
             },
             "INSERT INTO " + getTable() + "  (" + fieldNames + ")" +
                     "VALUES (" + fieldValuePlaceholders + ") RETURNING id", getFieldValues());
