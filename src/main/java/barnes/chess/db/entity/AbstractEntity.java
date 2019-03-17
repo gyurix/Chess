@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AbstractEntity {
+public abstract class AbstractEntity {
   private String fieldNames;
   private String fieldValuePlaceholders;
   private Field[] fields;
