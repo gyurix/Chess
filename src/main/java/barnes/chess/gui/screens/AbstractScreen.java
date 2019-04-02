@@ -15,6 +15,8 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import javax.swing.table.TableColumn;
+
 import static javafx.scene.control.Alert.AlertType.ERROR;
 import static javafx.scene.control.Alert.AlertType.INFORMATION;
 
@@ -36,11 +38,6 @@ public abstract class AbstractScreen {
   }
 
   protected abstract void addComponentsToGrid();
-
-  public TableRow addRow() {
-    TableRow out = new TableRow();
-    return out;
-  }
 
   public ColumnConstraints col(double pct) {
     ColumnConstraints col = new ColumnConstraints();
@@ -76,18 +73,29 @@ public abstract class AbstractScreen {
     return out;
   }
 
-  private void createScene() {
-    scene = new Scene(grid, getWidth(), getHeight());
-  }
-
-  public ScrollBar createScrollBar() {
+  //-------
+  public ScrollBar createScrollBar(double fontSize) {
     ScrollBar out = new ScrollBar();
     return out;
   }
 
-  public TableView createTableView() {
-    TableView out = new TableView();
+  public TableView createTableView(){
+      TableView out = new TableView();
+      return out;
+  }
+  public TableRow addRow(){
+      TableRow out = new TableRow();
+      return out;
+  }
+
+  public TableColumn addTable(){
+    TableColumn out = new TableColumn();
     return out;
+  }
+  //-------
+
+  private void createScene() {
+    scene = new Scene(grid, getWidth(), getHeight());
   }
 
   public TextField createTextField(double fontSize) {
