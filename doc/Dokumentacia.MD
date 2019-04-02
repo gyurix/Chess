@@ -30,11 +30,11 @@ ukáže sa dashboard, ktorý bude implementovaný v nasledujúcich scenároch.
 Pri registrácii program uverí jedinečnosť prihlasovacieho mena, ako aj emailovej adresy.
 Keď nenájde rovnaké údaje v databáze, povolí registráciu.
 
-## 2. Výber používateľa a nastavenie jeho role
+## 2. Prehľadávateľný zoznam hier,  na ktorých používateľ participoval
 
-## 3. Prehľadávateľný zoznam hier,  na ktorých používateľ participoval
+## 3. Štatistiky hráča a administrácia líg
 
-## 4. Štatistiky hráča a administrácia líg
+## 4. Výber používateľa a nastavenie jeho role
 
 ## 5. Priateľský systém
 
