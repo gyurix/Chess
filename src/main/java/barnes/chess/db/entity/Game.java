@@ -10,7 +10,8 @@ import java.sql.Date;
 
 @Getter
 public class Game extends DurationHolder {
-  private int player1, player2, winner;
+  private int player1, player2;
+  private WinnerType winner;
 
   public static void getGames(UserProfile user, GameInfoCollectionInterval interval, Date date, int page, ErrorAcceptedConsumer<Game> handler) {
     int id = user.getId();

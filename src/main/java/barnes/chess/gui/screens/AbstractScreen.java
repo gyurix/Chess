@@ -90,7 +90,7 @@ public abstract class AbstractScreen {
 
   public TableColumn addTable(){
     TableColumn out = new TableColumn();
-
+    return out;
   }
   //-------
 
