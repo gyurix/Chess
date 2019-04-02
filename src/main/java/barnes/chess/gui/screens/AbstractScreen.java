@@ -71,6 +71,22 @@ public abstract class AbstractScreen {
     return out;
   }
 
+  //-------
+  public ScrollBar createScrollBar(double fontSize) {
+    ScrollBar out = new ScrollBar();
+    return out;
+  }
+
+  public TableView createTableView(){
+      TableView out = new TableView();
+      return out;
+  }
+  public TableRow addRow(){
+      TableRow out = new TableRow();
+      return out;
+  }
+  //-------
+
   private void createScene() {
     scene = new Scene(grid, getWidth(), getHeight());
   }
