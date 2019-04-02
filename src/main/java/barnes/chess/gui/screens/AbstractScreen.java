@@ -81,7 +81,7 @@ public abstract class AbstractScreen {
       TableView out = new TableView();
       return out;
   }
-  public TableRow addRow(){
+  public TableRow addCol(){
       TableRow out = new TableRow();
       return out;
   }
