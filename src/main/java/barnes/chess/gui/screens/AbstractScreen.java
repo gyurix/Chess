@@ -37,6 +37,11 @@ public abstract class AbstractScreen {
 
   protected abstract void addComponentsToGrid();
 
+  public TableRow addRow() {
+    TableRow out = new TableRow();
+    return out;
+  }
+
   public ColumnConstraints col(double pct) {
     ColumnConstraints col = new ColumnConstraints();
     col.setPercentWidth(pct);
@@ -71,24 +76,18 @@ public abstract class AbstractScreen {
     return out;
   }
 
-  //-------
-  public ScrollBar createScrollBar(double fontSize) {
+  private void createScene() {
+    scene = new Scene(grid, getWidth(), getHeight());
+  }
+
+  public ScrollBar createScrollBar() {
     ScrollBar out = new ScrollBar();
     return out;
   }
 
-  public TableView createTableView(){
-      TableView out = new TableView();
-      return out;
-  }
-  public TableRow addCol(){
-      TableRow out = new TableRow();
-      return out;
-  }
-  //-------
-
-  private void createScene() {
-    scene = new Scene(grid, getWidth(), getHeight());
+  public TableView createTableView() {
+    TableView out = new TableView();
+    return out;
   }
 
   public TextField createTextField(double fontSize) {

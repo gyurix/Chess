@@ -3,6 +3,7 @@ package barnes.chess.db.entity;
 import barnes.chess.db.DB;
 import barnes.chess.utils.ErrorAcceptedRunnable;
 import barnes.chess.utils.ThreadUtil;
+import lombok.Getter;
 
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
@@ -13,6 +14,7 @@ public abstract class AbstractEntity {
   private String fieldNames;
   private String fieldValuePlaceholders;
   private Field[] fields;
+  @Getter
   private int id;
 
   public AbstractEntity() {
