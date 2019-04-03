@@ -82,8 +82,8 @@ public abstract class AbstractScreen {
       TableView out = new TableView();
       return out;
   }
-  public TableRow addRow(){
-      TableRow out = new TableRow();
+  public TableColumn addColumn(){
+      TableColumn out = new TableColumn();
       return out;
   }
 
