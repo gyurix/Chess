@@ -1,7 +1,7 @@
 package barnes.chess.db.entity;
 
 import barnes.chess.db.DB;
-import barnes.chess.db.data.CollectionInterval;
+import barnes.chess.db.stats.CollectionInterval;
 import barnes.chess.utils.ErrorAcceptedConsumer;
 import barnes.chess.utils.ThreadUtil;
 import lombok.Getter;

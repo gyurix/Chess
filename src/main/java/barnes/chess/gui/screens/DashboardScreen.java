@@ -1,24 +1,23 @@
 package barnes.chess.gui.screens;
 
-import barnes.chess.db.data.CollectionInterval;
-import barnes.chess.db.data.StatType;
 import barnes.chess.db.entity.Game;
 import barnes.chess.db.entity.UserProfile;
+import barnes.chess.db.stats.CollectionInterval;
+import barnes.chess.db.stats.StatElement;
+import barnes.chess.db.stats.StatType;
 import barnes.chess.utils.ErrorAcceptedConsumer;
 import barnes.chess.utils.ThreadUtil;
-import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import javafx.util.Callback;
 
 import java.sql.Date;
-import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.List;
+
+import static barnes.chess.db.stats.CollectionInterval.*;
 
 public class DashboardScreen extends AbstractScreen {
   private Label DailyStatsLabel;
@@ -52,13 +51,9 @@ public class DashboardScreen extends AbstractScreen {
   private TableRow WinLoseRatio;
   private TableRow WinsRow;
   private Label currentUserStatsLabel;
-  private TableView dailyStatsTable;
-  private TableView monthlyStatsTable;
-  private TableView overallStatsTable;
   private UserProfile user;
   private ScrollPane userSelectorBar;
   private Label userSelectorLabel;
-  private TableView weeklyStatsTable;
 
 
   public DashboardScreen(Stage stage, UserProfile user) {
@@ -67,13 +62,13 @@ public class DashboardScreen extends AbstractScreen {
 
   @Override
   protected void addComponentsToGrid() {
-    grid.add(userSelectorLabel, 0, 1);
+    /*grid.add(userSelectorLabel, 1, 1);
     grid.add(currentUserStatsLabel, 1, 1);
-    grid.add(userSelectorBar, 1, 2);
-    grid.add(dailyStatsTable, 2, 0);
-    grid.add(weeklyStatsTable, 3, 0);
-    grid.add(monthlyStatsTable, 2, 1);
-    grid.add(overallStatsTable, 3, 1);
+    grid.add(userSelectorBar, 1, 2);*/
+    withStatsTable(DAILY, (t) -> grid.add(t, 1, 1));
+    withStatsTable(WEEKLY, (t) -> grid.add(t, 2, 1));
+    withStatsTable(MONTHLY, (t) -> grid.add(t, 1, 2));
+    withStatsTable(OVERALL, (t) -> grid.add(t, 2, 2));
   }
 
   @Override
@@ -86,13 +81,8 @@ public class DashboardScreen extends AbstractScreen {
     userSelectorLabel = createLabel("User selector", 10);
     userSelectorBar = createScrollPane(grid);
     currentUserStatsLabel = createLabel("Current user stats", 20);
-    UserTable = createTableView("Nick", "Role", "ID");
-    UserTable.setEditable(false);
-
-    dailyStatsTable = createStatsTable();
-    weeklyStatsTable = createStatsTable();
-    monthlyStatsTable = createStatsTable();
-    overallStatsTable = createStatsTable();
+    //UserTable = createTableView("Nick", "Role", "ID");
+    //UserTable.setEditable(false);
 
     WSPlayedGamesRow = addRow();
     WSWinsRow = addRow();
@@ -137,65 +127,27 @@ public class DashboardScreen extends AbstractScreen {
             col(11));
   }
 
-  protected void populateComponents() {
-    new StatsVisitor(dailyStatsTable, CollectionInterval.DAILY);
-    new StatsVisitor(weeklyStatsTable, CollectionInterval.WEEKLY);
-    new StatsVisitor(monthlyStatsTable, CollectionInterval.MONTHLY);
-    new StatsVisitor(overallStatsTable, CollectionInterval.OVERALL);
-  }
-
   @Override
   protected void onClose(WindowEvent e) {
     new LoginScreen(new Stage());
   }
 
-  public TableView createStatsTable() {
-    return createTableView("Stat", "Value");
+  @Override
+  protected void populateComponents() {
+
+  }
+
+  public void withStatsTable(CollectionInterval interval, ErrorAcceptedConsumer<TableView> consumer) {
+    int userId = user.getId();
+    Game.getGames(user, interval, new Date(System.currentTimeMillis()), (games) ->
+            ThreadUtil.ui(() -> {
+              List<Object> stats = new ArrayList<>();
+              for (StatType t : StatType.values())
+                stats.add(new StatElement(t, userId, games));
+              consumer.accept(createTableView(stats));
+            }));
   }
 
   protected void registerEvents() {
-  }
-
-  private static class UserVisitor implements Callback<TableView, TableRow> {
-
-    @Override
-    public TableRow call(TableView param) {
-      return null;
-    }
-  }
-
-  private class StatsVisitor implements ErrorAcceptedConsumer<List<Game>> {
-    private TableView view;
-
-    public StatsVisitor(TableView view, CollectionInterval interval) {
-      this.view = view;
-      Game.getGames(user, interval, new Date(System.currentTimeMillis()), this);
-    }
-
-    @SuppressWarnings("Convert2Lambda")
-    @Override
-    public void accept(List<Game> games) {
-      ThreadUtil.ui(() -> {
-        int userId = user.getId();
-        ObservableList items = view.getItems();
-        for (StatType st : StatType.values())
-          items.add(new AbstractMap.SimpleEntry<>(st.toString(), String.valueOf(st.get(userId, games))));
-        ObservableList<TableColumn> cols = view.getColumns();
-        cols.get(0).setCellValueFactory(new Callback<TableColumn.CellDataFeatures, ObservableValue>() {
-          @Override
-          public ObservableValue call(TableColumn.CellDataFeatures param) {
-            return new ReadOnlyStringWrapper(((AbstractMap.SimpleEntry<String, String>) param.getValue()).getKey());
-          }
-        });
-        cols.get(1).setCellValueFactory((new Callback<TableColumn.CellDataFeatures, ObservableValue>() {
-          @Override
-          public ObservableValue call(TableColumn.CellDataFeatures param) {
-            return new ReadOnlyStringWrapper(((AbstractMap.SimpleEntry<String, String>) param.getValue()).getValue());
-          }
-        }));
-        view.refresh();
-        System.out.println("Done");
-      });
-    }
   }
 }

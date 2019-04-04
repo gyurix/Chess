@@ -1,4 +1,4 @@
-package barnes.chess.db.data;
+package barnes.chess.db.stats;
 
 import java.sql.Timestamp;
 import java.util.Calendar;

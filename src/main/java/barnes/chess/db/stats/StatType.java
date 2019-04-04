@@ -1,4 +1,4 @@
-package barnes.chess.db.data;
+package barnes.chess.db.stats;
 
 import barnes.chess.db.entity.Game;
 import barnes.chess.db.entity.WinnerType;
