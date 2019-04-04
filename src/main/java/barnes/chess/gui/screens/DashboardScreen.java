@@ -7,6 +7,7 @@ import barnes.chess.db.entity.UserProfile;
 import barnes.chess.utils.ErrorAcceptedConsumer;
 import barnes.chess.utils.ThreadUtil;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.scene.control.*;
@@ -17,9 +18,7 @@ import javafx.util.Callback;
 
 import java.sql.Date;
 import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class DashboardScreen extends AbstractScreen {
   private Label DailyStatsLabel;
@@ -173,22 +172,28 @@ public class DashboardScreen extends AbstractScreen {
       Game.getGames(user, interval, new Date(System.currentTimeMillis()), this);
     }
 
+    @SuppressWarnings("Convert2Lambda")
     @Override
     public void accept(List<Game> games) {
       ThreadUtil.ui(() -> {
         int userId = user.getId();
-        List<Map.Entry<StatType, Double>> data = new ArrayList<>();
+        ObservableList items = view.getItems();
         for (StatType st : StatType.values())
-          data.add(new AbstractMap.SimpleEntry<>(st, st.get(userId, games)));
+          items.add(new AbstractMap.SimpleEntry<>(st.toString(), String.valueOf(st.get(userId, games))));
         ObservableList<TableColumn> cols = view.getColumns();
-        cols.get(0).setCellValueFactory((c) -> {
-          System.out.println("Get value for col 0");
-          return new ReadOnlyStringWrapper("Test");
+        cols.get(0).setCellValueFactory(new Callback<TableColumn.CellDataFeatures, ObservableValue>() {
+          @Override
+          public ObservableValue call(TableColumn.CellDataFeatures param) {
+            return new ReadOnlyStringWrapper(((AbstractMap.SimpleEntry<String, String>) param.getValue()).getKey());
+          }
         });
-        cols.get(1).setCellValueFactory((c) -> {
-          System.out.println("Get value for col 1");
-          return new ReadOnlyStringWrapper("Test 2");
-        });
+        cols.get(1).setCellValueFactory((new Callback<TableColumn.CellDataFeatures, ObservableValue>() {
+          @Override
+          public ObservableValue call(TableColumn.CellDataFeatures param) {
+            return new ReadOnlyStringWrapper(((AbstractMap.SimpleEntry<String, String>) param.getValue()).getValue());
+          }
+        }));
+        view.refresh();
         System.out.println("Done");
       });
     }
