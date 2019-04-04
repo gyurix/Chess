@@ -1,6 +1,7 @@
 package barnes.chess.gui.screens;
 
 import barnes.chess.gui.ResourceManager;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
@@ -15,8 +16,6 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-import javax.swing.table.TableColumn;
-
 import static javafx.scene.control.Alert.AlertType.ERROR;
 import static javafx.scene.control.Alert.AlertType.INFORMATION;
 
@@ -26,8 +25,9 @@ public abstract class AbstractScreen {
   protected Stage stage;
   protected String title = "Chess Stats - " + getClass().getSimpleName().replace("Screen", "");
 
-  public AbstractScreen(Stage stage) {
+  public AbstractScreen(Stage stage, Object... args) {
     this.stage = stage;
+    initScreen(args);
     initGrid();
     initComponents();
     populateComponents();
@@ -37,7 +37,17 @@ public abstract class AbstractScreen {
     show(stage);
   }
 
+  public TableRow addRow() {
+    TableRow out = new TableRow();
+    return out;
+  }
+
+
   protected abstract void addComponentsToGrid();
+
+  private void createScene() {
+    scene = new Scene(grid, getWidth(), getHeight());
+  }
 
   public ColumnConstraints col(double pct) {
     ColumnConstraints col = new ColumnConstraints();
@@ -73,27 +83,21 @@ public abstract class AbstractScreen {
     return out;
   }
 
-  public ScrollBar createScrollBar() {
-    ScrollBar out = new ScrollBar();
+  public ScrollPane createScrollPane(GridPane grid) {
+    ScrollPane out = new ScrollPane(grid);
     return out;
   }
 
-  public TableView createTableView(){
-      TableView out = new TableView();
-      return out;
-  }
-  public TableColumn addColumn(){
-      TableColumn out = new TableColumn();
-      return out;
-  }
-
-  public TableColumn addTable(){
-    TableColumn out = new TableColumn();
+  public TableView createTableView(String... columnNames) {
+    TableView out = new TableView();
+    ObservableList<TableColumn> cols = out.getColumns();
+    for (String c : columnNames)
+      cols.add(new TableColumn(c));
+    out.setEditable(false);
     return out;
   }
 
-  private void createScene() {
-    scene = new Scene(grid, getWidth(), getHeight());
+  protected void initScreen(Object... args) {
   }
 
   public TextField createTextField(double fontSize) {

@@ -30,16 +30,9 @@ ukáže sa dashboard, ktorý bude implementovaný v nasledujúcich scenároch.
 Pri registrácii program uverí jedinečnosť prihlasovacieho mena, ako aj emailovej adresy.
 Keď nenájde rovnaké údaje v databáze, povolí registráciu.
 
-## 2. Prehľadávateľný zoznam hier, na ktorých používateľ participoval
-
+## 2. Prehľadávateľný zoznam hier,  na ktorých používateľ participoval
 
 ## 3. Štatistiky hráča a administrácia líg
-
-Tretí scenár umožní použivatelovi pozrieť priebežnú štatistiku hrača.
-Bude existovať 4 tabuľky: DailyStats - štatistika, ktorá ukladá informacie v pribehu jedného dňa,
-WeeklyStats - ukladá informacie o hrach, ktoré sa uskutočnili v priebehu tyžňa,
-MonthlyStats - informacie o hrach, ktoré priebehlí počas mesiaca (od 1. do posledného dňa). 
-Hocikdo može pozorovať štatistiku všetkých hračov, ale len administrator má povolenie meniť infomacie. 
 
 ## 4. Výber používateľa a nastavenie jeho role
 
