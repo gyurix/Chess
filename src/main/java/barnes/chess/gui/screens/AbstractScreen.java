@@ -76,6 +76,12 @@ public abstract class AbstractScreen {
     return out;
   }
 
+  public Label createBoldLabel(String text, double fontSize) {
+    Label out = new Label(text);
+    out.setFont(Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, fontSize));
+    return out;
+  }
+
   public PasswordField createPasswordField(double fontSize) {
     PasswordField out = new PasswordField();
     out.setFont(Font.font(fontSize));
@@ -119,7 +125,6 @@ public abstract class AbstractScreen {
           f.setAccessible(true);
           columns.add(createTableCol(fieldName, f::get));
         }
-
       }
       out.refresh();
     }
