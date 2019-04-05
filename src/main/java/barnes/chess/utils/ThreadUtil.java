@@ -11,7 +11,7 @@ public class ThreadUtil {
   private static final ExecutorService executor = Executors.newCachedThreadPool();
 
   public static void async(ErrorAcceptedRunnable runnable) {
-    executor.execute(runnable.toRunnable());
+    executor.submit(runnable.toRunnable());
   }
 
   public static void ui(ErrorAcceptedRunnable runnable) {

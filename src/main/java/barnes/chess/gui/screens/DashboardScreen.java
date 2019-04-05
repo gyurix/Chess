@@ -6,9 +6,11 @@ import barnes.chess.db.stats.CollectionInterval;
 import barnes.chess.db.stats.StatElement;
 import barnes.chess.db.stats.StatType;
 import barnes.chess.utils.ErrorAcceptedConsumer;
-import barnes.chess.utils.ThreadUtil;
 import javafx.geometry.HPos;
-import javafx.scene.control.*;
+import javafx.geometry.VPos;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -20,36 +22,7 @@ import java.util.List;
 import static barnes.chess.db.stats.CollectionInterval.*;
 
 public class DashboardScreen extends AbstractScreen {
-  private Label DailyStatsLabel;
-  private TableRow DrawsRow;
-  private TableColumn FirstUserColumn;
-  private TableRow LosesRow;
-  private TableRow MSDrawsRow;
-  private TableRow MSLossesRow;
-  private TableRow MSPlayedGamesRow;
-  private TableRow MSWinGamesRatio;
-  private TableRow MSWinLoseRatioRow;
-  private TableRow MSWinsRow;
-  private Label MonthlyStatsLabel;
-  private TableRow OSDrawsRow;
-  private TableRow OSLossesRow;
-  private TableRow OSPlayedGamesRow;
-  private TableRow OSWinGamesRatio;
-  private TableRow OSWinLoseRatioRow;
-  private TableRow OSWinsRow;
-  private Label OverallStatsLabel;
-  private TableRow PlayedGamesRow;
   private TableView UserTable;
-  private TableRow WSDrawsRow;
-  private TableRow WSLossesRow;
-  private TableRow WSPlayedGamesRow;
-  private TableRow WSWinGamesRatio;
-  private TableRow WSWinLoseRatioRow;
-  private TableRow WSWinsRow;
-  private Label WeeklyStatsLabel;
-  private TableRow WinGameRatio;
-  private TableRow WinLoseRatio;
-  private TableRow WinsRow;
   private Label currentUserStatsLabel;
   private UserProfile user;
   private ScrollPane userSelectorBar;
@@ -65,10 +38,15 @@ public class DashboardScreen extends AbstractScreen {
     /*grid.add(userSelectorLabel, 1, 1);
     grid.add(currentUserStatsLabel, 1, 1);
     grid.add(userSelectorBar, 1, 2);*/
-    withStatsTable(DAILY, (t) -> grid.add(t, 1, 1));
-    withStatsTable(WEEKLY, (t) -> grid.add(t, 2, 1));
-    withStatsTable(MONTHLY, (t) -> grid.add(t, 1, 2));
-    withStatsTable(OVERALL, (t) -> grid.add(t, 2, 2));
+    grid.add(createLabel("Daily Stats", 16), 2, 2);
+    grid.add(createLabel("Weekly Stats", 16), 3, 2);
+    grid.add(createLabel("Monthly Stats", 16), 2, 4);
+    grid.add(createLabel("Overall Stats", 16), 3, 4);
+
+    withStatsTable(DAILY, (t) -> grid.add(t, 2, 3));
+    withStatsTable(WEEKLY, (t) -> grid.add(t, 3, 3));
+    withStatsTable(MONTHLY, (t) -> grid.add(t, 2, 5));
+    withStatsTable(OVERALL, (t) -> grid.add(t, 3, 5));
   }
 
   @Override
@@ -83,32 +61,11 @@ public class DashboardScreen extends AbstractScreen {
     currentUserStatsLabel = createLabel("Current user stats", 20);
     //UserTable = createTableView("Nick", "Role", "ID");
     //UserTable.setEditable(false);
-
-    WSPlayedGamesRow = addRow();
-    WSWinsRow = addRow();
-    WSLossesRow = addRow();
-    WSDrawsRow = addRow();
-    WSWinLoseRatioRow = addRow();
-    WSWinGamesRatio = addRow();
-
-    MSPlayedGamesRow = addRow();
-    MSWinsRow = addRow();
-    MSLossesRow = addRow();
-    MSDrawsRow = addRow();
-    MSWinLoseRatioRow = addRow();
-    MSWinGamesRatio = addRow();
-
-    OSPlayedGamesRow = addRow();
-    OSWinsRow = addRow();
-    OSLossesRow = addRow();
-    OSDrawsRow = addRow();
-    OSWinLoseRatioRow = addRow();
-    OSWinGamesRatio = addRow();
   }
 
   @Override
   protected int getHeight() {
-    return 600;
+    return 630;
   }
 
   @Override
@@ -119,12 +76,20 @@ public class DashboardScreen extends AbstractScreen {
   @Override
   protected void initGrid() {
     super.initGrid();
-    grid.setVgap(30);
+    grid.setVgap(5);
     grid.getColumnConstraints().addAll(col(11),
             col(26, HPos.LEFT),
             col(26, HPos.CENTER),
             col(26, HPos.CENTER),
             col(11));
+
+    grid.getRowConstraints().addAll(row(11),
+            row(5, VPos.CENTER),
+            row(6, VPos.BOTTOM),
+            row(30, VPos.CENTER),
+            row(6, VPos.BOTTOM),
+            row(30, VPos.CENTER),
+            row(11));
   }
 
   @Override
@@ -139,13 +104,12 @@ public class DashboardScreen extends AbstractScreen {
 
   public void withStatsTable(CollectionInterval interval, ErrorAcceptedConsumer<TableView> consumer) {
     int userId = user.getId();
-    Game.getGames(user, interval, new Date(System.currentTimeMillis()), (games) ->
-            ThreadUtil.ui(() -> {
-              List<Object> stats = new ArrayList<>();
-              for (StatType t : StatType.values())
-                stats.add(new StatElement(t, userId, games));
-              consumer.accept(createTableView(stats));
-            }));
+    Game.getGames(user, interval, new Date(System.currentTimeMillis()), (games) -> {
+      List<Object> stats = new ArrayList<>();
+      for (StatType t : StatType.values())
+        stats.add(new StatElement(t, userId, games));
+      consumer.accept(createTableView(stats));
+    });
   }
 
   protected void registerEvents() {

@@ -13,6 +13,8 @@ public class StatElement {
   public StatElement(StatType stat, int userId, List<Game> games) {
     double dValue = stat.get(userId, games);
     this.stat = stat;
-    value = dValue == (int) dValue ? (int) dValue : value;
+    value = dValue;
+    if (dValue == (int) dValue)
+      value = (int) dValue;
   }
 }

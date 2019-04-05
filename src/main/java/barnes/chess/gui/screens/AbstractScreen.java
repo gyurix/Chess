@@ -3,16 +3,18 @@ package barnes.chess.gui.screens;
 import barnes.chess.gui.ResourceManager;
 import barnes.chess.utils.ErrorAcceptedFunction;
 import com.sun.javafx.collections.ObservableListWrapper;
-import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
@@ -44,17 +46,7 @@ public abstract class AbstractScreen {
     show(stage);
   }
 
-  public TableRow addRow() {
-    TableRow out = new TableRow();
-    return out;
-  }
-
-
   protected abstract void addComponentsToGrid();
-
-  private void createScene() {
-    scene = new Scene(grid, getWidth(), getHeight());
-  }
 
   public ColumnConstraints col(double pct) {
     ColumnConstraints col = new ColumnConstraints();
@@ -90,14 +82,18 @@ public abstract class AbstractScreen {
     return out;
   }
 
+  private void createScene() {
+    scene = new Scene(grid, getWidth(), getHeight());
+  }
+
   public ScrollPane createScrollPane(GridPane grid) {
     ScrollPane out = new ScrollPane(grid);
     return out;
   }
 
-  public TableColumn<Object, Object> createTableCol(String name, ErrorAcceptedFunction<Object, Object> dataGenerator) {
-    TableColumn<Object, Object> col = new TableColumn<>(name);
-    col.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(dataGenerator.toFunction().apply(c.getValue())));
+  public TableColumn<Object, String> createTableCol(String name, ErrorAcceptedFunction<Object, Object> dataGenerator) {
+    TableColumn<Object, String> col = new TableColumn<>(name);
+    col.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(dataGenerator.toFunction().apply(c.getValue()))));
     col.setMaxWidth(10000);
     return col;
   }
@@ -130,9 +126,6 @@ public abstract class AbstractScreen {
     return out;
   }
 
-  protected void initScreen(Object... args) {
-  }
-
   public TextField createTextField(double fontSize) {
     TextField out = new TextField();
     out.setFont(Font.font(fontSize));
@@ -151,11 +144,27 @@ public abstract class AbstractScreen {
     grid.setAlignment(Pos.CENTER);
   }
 
+  protected void initScreen(Object... args) {
+  }
+
   protected abstract void onClose(WindowEvent e);
 
   protected abstract void populateComponents();
 
   protected abstract void registerEvents();
+
+  public RowConstraints row(double pct) {
+    RowConstraints row = new RowConstraints();
+    row.setPercentHeight(pct);
+    return row;
+  }
+
+  public RowConstraints row(double pct, VPos alignment) {
+    RowConstraints row = new RowConstraints();
+    row.setPercentHeight(pct);
+    row.setValignment(alignment);
+    return row;
+  }
 
   public void show(Stage stage) {
     stage.setTitle(title);

@@ -4,6 +4,7 @@ import barnes.chess.utils.ErrorAcceptedConsumer;
 import lombok.Getter;
 
 import java.sql.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static barnes.chess.utils.ThreadUtil.async;
 
@@ -11,7 +12,16 @@ public class DB {
   @Getter
   private static DB instance;
   private final DatabaseConfig config;
-  private Connection connection;
+
+  static {
+    try {
+      Class.forName("org.postgresql.Driver");
+    } catch (ClassNotFoundException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private ConcurrentHashMap<Thread, Connection> connections = new ConcurrentHashMap<>();
 
   public DB(DatabaseConfig config) {
     if (instance != null)
@@ -20,17 +30,20 @@ public class DB {
     this.config = config;
   }
 
-  public void checkConnection() {
+  public Connection checkConnection() {
+    Thread thread = Thread.currentThread();
+    Connection connection = connections.get(Thread.currentThread());
     try {
       if (connection != null && connection.isValid(config.getTimeout()))
-        return;
-      Class.forName("org.postgresql.Driver");
+        return connection;
       connection = DriverManager.getConnection("jdbc:postgresql://" +
                       config.getHost() + ":" + config.getPort() + "/" + config.getDatabase(),
               config.getUsername(), config.getPassword());
+      connections.put(thread, connection);
     } catch (Throwable e) {
       e.printStackTrace();
     }
+    return connection;
   }
 
   public void command(ErrorAcceptedConsumer<Boolean> resultHandler, String query, Object... data) {
@@ -42,8 +55,7 @@ public class DB {
   }
 
   private PreparedStatement prepare(String query, Object... data) throws SQLException {
-    checkConnection();
-    PreparedStatement ps = connection.prepareStatement(query);
+    PreparedStatement ps = checkConnection().prepareStatement(query);
     for (int i = 0; i < data.length; ++i)
       ps.setObject(i + 1, data[i]);
     return ps;
@@ -62,13 +74,12 @@ public class DB {
   }
 
   public void shutdown() {
-    if (connection != null) {
+    connections.values().forEach(c -> {
       try {
-        connection.close();
-        connection = null;
+        c.close();
       } catch (SQLException e) {
         e.printStackTrace();
       }
-    }
+    });
   }
 }

@@ -28,8 +28,8 @@ public class Game extends DurationHolder {
         game.load(rs);
         games.add(game);
       }
-      ThreadUtil.ui(() -> handler.accept(games));
       rs.close();
+      ThreadUtil.ui(() -> handler.accept(games));
     }, "SELECT * FROM Game INNER JOIN Duration ON Duration.id=Game.duration " +
             "WHERE (Game.player1 = ? OR Game.player2 = ?) AND" +
             " Duration.end_time >= ? AND Duration.end_time < ? ORDER BY Duration.end_time", id, id, start, end);
