@@ -30,22 +30,22 @@ ukáže sa dashboard, ktorý bude implementovaný v nasledujúcich scenároch.
 Pri registrácii program uverí jedinečnosť prihlasovacieho mena, ako aj emailovej adresy.
 Keď nenájde rovnaké údaje v databáze, povolí registráciu.
 
-## 2. Prehľadávateľný zoznam hier,  na ktorých používateľ participoval
+## 2. Štatistiky hráča a administrácia líg
+Tretí scenár umožní použivateľom prehľad svojej štatistiky. Sú 4 možne štatistiky: denná, mesiačná,
+ročná a celková. Obyčajný použivateľ môže prehľadávať len vlastnú štatistiku, keď administrátor
+má možnosť prehľadavať štatistiku všetkých hračov.
+Zobrazíme nasledovné štatistiky:
+- celkový počet hier (celé čislo)
+- výhry (celé čislo)
+- prehry (celé čislo)
+- remízy (celé čislo)
+- koeficient výhier / prehier (necelé čislo zaokrúhlené na 2 desatinné miesta)
+- koeficient výhier / celkový počet hier (necelé čislo zaokruhlené na 2 desatinné miesta)
 
-## 3. Štatistiky hráča a administrácia líg
-Treti scenar umozni pouzivatelom prehlad svojej statistiky. Su 4 statistiky: denna, mesiacna,
-rocna a celkova. Obycajny pouzivatel moze prehladat len vlastnu statistiku, ked administrator
-ma moznost prehladavat statistiku vstkych hracov.
-Kazda statistika obsahuje nasledujuce polia:
-- celkovy pocet hier (cele cislo)
-- vyhry (cele cislo)
-- prehry (cele cislo)
-- remizy (cele cislo)
-- koeficient vyhier / prehier (necele cislo zaokruhlene na 2 desatinne miesta)
-- koeficient vyhier / celkovy pocet hier (necele cislo zaokruhlene na 2 desatinne miesta)
+Administrátor taktiež má možnosť pozrieť všetkých použivatelov, ich rank a id, ktoré oni majú.
 
-Administrator taktiez ma moznost pozriet vsetkych pouzivatelov, ich rank a id, ktore oni maju.
 
+## 3. Prehľadávateľný zoznam hier,  na ktorých používateľ participoval
 
 ## 4. Výber používateľa a nastavenie jeho role
 
