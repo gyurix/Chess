@@ -9,14 +9,12 @@ import barnes.chess.utils.ErrorAcceptedConsumer;
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import javax.jws.soap.SOAPBinding;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.*;
@@ -26,12 +24,15 @@ import static barnes.chess.db.stats.CollectionInterval.*;
 public class DashboardScreen extends AbstractScreen {
   private TableView UserTable;
   private Label currentUserStatsLabel;
-  private EnumMap<CollectionInterval, TableView<Object>> statTables = new EnumMap<>(CollectionInterval.class);
-  private UserProfile user;
   private ScrollPane userSelectorBar;
   private Label userSelectorLabel;
-  private DatePicker statViewDatePicker;
+  private Button previousList;
+  private Button nextList;
 
+  private EnumMap<CollectionInterval, TableView<Object>> statTables = new EnumMap<>(CollectionInterval.class);
+  private UserProfile user;
+
+  private DatePicker statViewDatePicker;
 
   public DashboardScreen(Stage stage, UserProfile user) {
     super(stage, user);
@@ -46,15 +47,21 @@ public class DashboardScreen extends AbstractScreen {
     initStats(WEEKLY, 3, 3);
     initStats(MONTHLY, 2, 5);
     initStats(OVERALL, 3, 5);
+
     grid.add(statViewDatePicker, 2, 1, 2, 1);
+    grid.add(previousList, 0, 5, 1, 1);
+    grid.add(nextList, 1, 5, 1, 1);
   }
 
   protected void initComponents() {
     GridPane grid = new GridPane();
+    previousList = createButton("prev", this::previousButtonClick);
+    nextList = createButton("next", this::nextButtonClick);
     userSelectorLabel = createLabel("User selector", 10);
     userSelectorBar = createScrollPane(grid);
     currentUserStatsLabel = createLabel("Current user stats", 20);
     statViewDatePicker = new DatePicker();
+
     //UserTable = createTableView("Nick", "Role", "ID");
     //UserTable.setEditable(false);
   }
@@ -110,6 +117,27 @@ public class DashboardScreen extends AbstractScreen {
   protected void populateComponents() {
 
   }
+//-------------------------
+  int fromId, toId;
+  private void previousButtonClick(Object o){
+
+  }
+  private void nextButtonClick(Object o){
+
+  }
+  public void withUsersTable(ErrorAcceptedConsumer<TableView> consumer) {
+    while(toId - fromId != 0){
+      UserProfile.getAll(toId, (users) -> {
+        List<Objects> us = new ArrayList<>();
+        for(StatType t : StatType.values()){}
+
+      });
+    }
+  }
+  public void initUsers(int col, int row){
+
+  }
+//------------------------------------
 
   public void withStatsTable(CollectionInterval interval, ErrorAcceptedConsumer<TableView> consumer) {
     int userId = user.getId();

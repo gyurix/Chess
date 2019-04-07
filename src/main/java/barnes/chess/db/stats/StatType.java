@@ -1,8 +1,10 @@
 package barnes.chess.db.stats;
 
 import barnes.chess.db.entity.Game;
+import barnes.chess.db.entity.UserProfile;
 import barnes.chess.db.entity.WinnerType;
 
+import javax.jws.soap.SOAPBinding;
 import java.util.List;
 
 import static barnes.chess.utils.FormattingUtils.toCamelCase;
@@ -65,7 +67,20 @@ public enum StatType {
         public String toString() {
             return "Win / Games Ratio";
         }
-    };
+    }, /**/NAME{
+        public String nick(int userId, List<UserProfile> users){
+            for(UserProfile u : users){
+                if(userId == u.getId()){
+                    return u.getNick();
+                }
+            }
+            return "N/A";
+        }
+        @Override
+        public double get(int userId, List<Game> games){
+            return 0;
+        }
+    };/**/
 
     public abstract double get(int userId, List<Game> games);
 

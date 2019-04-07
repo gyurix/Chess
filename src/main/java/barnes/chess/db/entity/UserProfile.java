@@ -40,4 +40,16 @@ public class UserProfile extends AbstractEntity {
       rs.close();
     }, "SELECT * FROM UserProfile WHERE nick=? LIMIT 1", nick);
   }
+
+  public static void getAll(int count, ErrorAcceptedConsumer<UserProfile> handler) {
+    DB.getInstance().query((rs) -> {
+      if (rs.next()) {
+        UserProfile profile = new UserProfile();
+        profile.load(rs);
+        ThreadUtil.ui(() -> handler.accept(profile));
+      } else
+        ThreadUtil.ui(() -> handler.accept(null));
+      rs.close();
+    }, "SELECT nick, rank, id FROM UserProfile WHERE id > ? ORDER BY id LIMIT 1", count);
+  }
 }
