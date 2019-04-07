@@ -45,6 +45,7 @@ public class DashboardScreen extends AbstractScreen {
     initStats(WEEKLY, 3, 3);
     initStats(MONTHLY, 2, 5);
     initStats(OVERALL, 3, 5);
+    initUsers(4, 4);
 
     grid.add(statViewDatePicker, 2, 1, 2, 1);
     grid.add(previousList, 0, 5, 1, 1);
@@ -135,7 +136,9 @@ public class DashboardScreen extends AbstractScreen {
     });
   }
   public void initUsers(int col, int row){
+    withUsersTable((t) -> {
 
+    });
   }
 //------------------------------------
 
