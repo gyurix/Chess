@@ -17,6 +17,4 @@ public class StatElement {
     if (dValue == (int) dValue)
       value = (int) dValue;
   }
-
-
 }

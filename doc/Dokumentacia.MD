@@ -51,7 +51,7 @@ Administrátor taktiež má možnosť pozrieť všetkých použivatelov, ich ran
 ## 3. Výber používateľa a nastavenie jeho role
 
 Tento scenár je určený pre administrátora. V tomto prípade administrator mení rolu použivateľov,
-t.j. administrátor nastavujé ďalších administrátorov alebo ich vracia do obyčajných využivateľov systému.
+t.j. administrátor nastavuje ďalších administrátorov alebo ich vracia do obyčajných využivateľov systému.
 Administrátor má zoznám všetkých hračov - ich prihlasovacie meno, a pri tom rolu, ktoru oni odohrávajú v systéme.  
 
 ## 4. Prehľadávateľný zoznam hier, na ktorých používateľ participoval

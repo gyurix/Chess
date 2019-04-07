@@ -1,6 +1,7 @@
 package barnes.chess.db.entity;
 
 import barnes.chess.db.DB;
+import barnes.chess.db.stats.UserElement;
 import barnes.chess.utils.ErrorAcceptedConsumer;
 import barnes.chess.utils.ThreadUtil;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 import static barnes.chess.utils.HashUtils.HashType.SHA_256;
 import static barnes.chess.utils.HashUtils.hash;
@@ -41,15 +44,16 @@ public class UserProfile extends AbstractEntity {
     }, "SELECT * FROM UserProfile WHERE nick=? LIMIT 1", nick);
   }
 
-  public static void getAll(int count, ErrorAcceptedConsumer<UserProfile> handler) {
+  public static void getAll(ErrorAcceptedConsumer<List<UserElement>> handler, String query, int from, int count) {
+    query = "%" + query + "%";
     DB.getInstance().query((rs) -> {
-      if (rs.next()) {
-        UserProfile profile = new UserProfile();
-        profile.load(rs);
-        ThreadUtil.ui(() -> handler.accept(profile));
-      } else
-        ThreadUtil.ui(() -> handler.accept(null));
+      List<UserElement> users = new ArrayList<>();
+      while (rs.next())
+        users.add(new UserElement(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4)));
+      ThreadUtil.ui(() -> handler.accept(users));
       rs.close();
-    }, "SELECT nick, rank, id FROM UserProfile WHERE id > ? ORDER BY id LIMIT 1", count);
+    }, "SELECT UserProfile.id,UserProfile.nick,Rank.name,Rank.id FROM UserProfile LEFT JOIN Rank ON UserProfile.rank=Rank.id" +
+            " WHERE UserProfile.nick LIKE ? OR Rank.name LIKE ?" +
+            " ORDER BY UserProfile.id OFFSET " + from + " LIMIT " + count, query, query);
   }
 }

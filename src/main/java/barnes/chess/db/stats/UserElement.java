@@ -1,18 +1,13 @@
 package barnes.chess.db.stats;
 
-import barnes.chess.db.entity.UserProfile;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-import java.util.List;
-
+@Getter
+@AllArgsConstructor
 public class UserElement {
-    private UserType user;
-    private Object value;
-
-    public UserElement(UserType user, int userId, List<UserProfile> users) {
-        String sValue = user.nick(userId, users);
-        this.user = user;
-        value = sValue;
-        if (sValue == sValue)
-            value = sValue;
-    }
+  private int id;
+  private String name;
+  private String role;
+  private int roleId;
 }

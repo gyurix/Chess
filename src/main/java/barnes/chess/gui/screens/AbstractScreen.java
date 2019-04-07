@@ -104,12 +104,12 @@ public abstract class AbstractScreen {
     return col;
   }
 
-  public TableView createTableView(List<Object> data) {
+  public TableView createTableView(List data) {
     TableView<Object> out = new TableView<>();
     out.setEditable(false);
     if (data != null && !data.isEmpty()) {
       ObservableList<TableColumn<Object, ?>> columns = out.getColumns();
-      out.setItems(new ObservableListWrapper<>(data));
+      out.setItems(new ObservableListWrapper(data));
       Object o = data.get(0);
       Class cl = o.getClass();
       for (Field f : cl.getDeclaredFields()) {

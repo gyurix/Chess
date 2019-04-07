@@ -35,12 +35,6 @@ public class ChessLauncher extends Application {
             .username("dbs")
             .password("BkpKuHCEN9myIn3Q")
             .database("dbs").build());
-    db.query((r) -> {
-      System.out.println("Available ranks:");
-      while (r.next()) {
-        System.out.println(r.getInt(1) + ": " + r.getString(2));
-      }
-    }, "SELECT * FROM rank");
     new LoginScreen(stage);
   }
 }
