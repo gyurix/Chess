@@ -48,7 +48,13 @@ Zobrazíme nasledovné štatistiky:
 
 Administrátor taktiež má možnosť pozrieť všetkých použivatelov, ich rank a id, ktoré oni majú.
 
-## 3. Prehľadávateľný zoznam hier, na ktorých používateľ participoval
+## 3. Výber používateľa a nastavenie jeho role
+
+Tento scenár je určený pre administrátora. V tomto prípade administrator mení rolu použivateľov,
+t.j. administrátor nastavujé ďalších administrátorov alebo ich vracia do obyčajných využivateľov systému.
+Administrátor má zoznám všetkých hračov - ich prihlasovacie meno, a pri tom rolu, ktoru oni odohrávajú v systeme.  
+
+## 4. Prehľadávateľný zoznam hier, na ktorých používateľ participoval
 
 Použivateľ bude moc pozrieť zoznam svojích hier, ktoré hrával. 
 Existujú 4. zoznámy:
@@ -61,8 +67,6 @@ Každý zoznám bude obsahovať:
 - použivatelské mena dvoch hračov, ktoré sa zučastnili v partie
 - výsledok - 1-0, 1/2 alebo 0-1
 - čas, kedy bola partia výtvorená
-
-## 4. Výber používateľa a nastavenie jeho role
 
 ## 5. Priateľský systém
 
