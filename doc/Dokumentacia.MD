@@ -36,6 +36,8 @@ Tretí scenár umožní použivateľom prehľad svojej štatistiky. Sú 4 možne
 ročná a celková. Obyčajný použivateľ môže prehľadávať len vlastnú štatistiku, keď administrátor
 má možnosť prehľadavať štatistiku všetkých hračov.
 
+![DashBoard](https://github.com/fiit-dbs-2019/dbs2019-project-assignment-barath-nestorenko/raw/master/doc/img/ChessStats.png)
+
 Zobrazíme nasledovné štatistiky:
 - celkový počet hier (celé čislo)
 - výhry (celé čislo)
