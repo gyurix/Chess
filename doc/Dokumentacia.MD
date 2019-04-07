@@ -30,9 +30,9 @@ ukáže sa dashboard, ktorý bude implementovaný v nasledujúcich scenároch.
 Pri registrácii program uverí jedinečnosť prihlasovacieho mena, ako aj emailovej adresy.
 Keď nenájde rovnaké údaje v databáze, povolí registráciu.
 
-## 2. Štatistiky hráča a administrácia líg
+## 2. Štatistiky hráča
 
-Tretí scenár umožní použivateľom prehľad svojej štatistiky. Sú 4 možne štatistiky: denná, mesiačná,
+Druhý scenár umožní použivateľom prehľad svojej štatistiky. Sú 4 možne štatistiky: denná, mesiačná,
 ročná a celková. Obyčajný použivateľ môže prehľadávať len vlastnú štatistiku, keď administrátor
 má možnosť prehľadavať štatistiku všetkých hračov.
 
@@ -48,8 +48,19 @@ Zobrazíme nasledovné štatistiky:
 
 Administrátor taktiež má možnosť pozrieť všetkých použivatelov, ich rank a id, ktoré oni majú.
 
+## 3. Prehľadávateľný zoznam hier, na ktorých používateľ participoval
 
-## 3. Prehľadávateľný zoznam hier,  na ktorých používateľ participoval
+Použivateľ bude moc pozrieť zoznam svojích hier, ktoré hrával. 
+Existujú 4. zoznámy:
+- denné partie - zoznám partií, ktoré hral v jeden deň
+- týždenné partie - zoznám partií, ktoré hral v týždeň
+- mesiačné partie - zoznám partií, ktoré hral v mesiac
+- celkový zoznám partií
+
+Každý zoznám bude obsahovať:
+- použivatelské mena dvoch hračov, ktoré sa zučastnili v partie
+- výsledok - 1-0, 1/2 alebo 0-1
+- čas, kedy bola partia výtvorená
 
 ## 4. Výber používateľa a nastavenie jeho role
 
