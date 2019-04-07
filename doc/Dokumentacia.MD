@@ -44,6 +44,8 @@ Kazda statistika obsahuje nasledujuce polia:
 - koeficient vyhier / prehier (necele cislo zaokruhlene na 2 desatinne miesta)
 - koeficient vyhier / celkovy pocet hier (necele cislo zaokruhlene na 2 desatinne miesta)
 
+Administrator taktiez ma moznost pozriet vsetkych pouzivatelov, ich rank a id, ktore oni maju.
+
 
 ## 4. Výber používateľa a nastavenie jeho role
 
