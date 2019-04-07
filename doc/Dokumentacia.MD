@@ -31,9 +31,11 @@ Pri registrácii program uverí jedinečnosť prihlasovacieho mena, ako aj email
 Keď nenájde rovnaké údaje v databáze, povolí registráciu.
 
 ## 2. Štatistiky hráča a administrácia líg
+
 Tretí scenár umožní použivateľom prehľad svojej štatistiky. Sú 4 možne štatistiky: denná, mesiačná,
 ročná a celková. Obyčajný použivateľ môže prehľadávať len vlastnú štatistiku, keď administrátor
 má možnosť prehľadavať štatistiku všetkých hračov.
+
 Zobrazíme nasledovné štatistiky:
 - celkový počet hier (celé čislo)
 - výhry (celé čislo)
