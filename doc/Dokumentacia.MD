@@ -33,6 +33,17 @@ Keď nenájde rovnaké údaje v databáze, povolí registráciu.
 ## 2. Prehľadávateľný zoznam hier,  na ktorých používateľ participoval
 
 ## 3. Štatistiky hráča a administrácia líg
+Treti scenar umozni pouzivatelom prehlad svojej statistiky. Su 4 statistiky: denna, mesiacna,
+rocna a celkova. Obycajny pouzivatel moze prehladat len vlastnu statistiku, ked administrator
+ma moznost prehladavat statistiku vstkych hracov.
+Kazda statistika obsahuje nasledujuce polia:
+- celkovy pocet hier (cele cislo)
+- vyhry (cele cislo)
+- prehry (cele cislo)
+- remizy (cele cislo)
+- koeficient vyhier / prehier (necele cislo zaokruhlene na 2 desatinne miesta)
+- koeficient vyhier / celkovy pocet hier (necele cislo zaokruhlene na 2 desatinne miesta)
+
 
 ## 4. Výber používateľa a nastavenie jeho role
 
