@@ -2,9 +2,7 @@ package barnes.chess.gui.screens;
 
 import barnes.chess.db.entity.Game;
 import barnes.chess.db.entity.UserProfile;
-import barnes.chess.db.stats.CollectionInterval;
-import barnes.chess.db.stats.StatElement;
-import barnes.chess.db.stats.StatType;
+import barnes.chess.db.stats.*;
 import barnes.chess.utils.ErrorAcceptedConsumer;
 import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.geometry.HPos;
@@ -126,13 +124,15 @@ public class DashboardScreen extends AbstractScreen {
 
   }
   public void withUsersTable(ErrorAcceptedConsumer<TableView> consumer) {
-    while(toId - fromId != 0){
-      UserProfile.getAll(toId, (users) -> {
-        List<Objects> us = new ArrayList<>();
-        for(StatType t : StatType.values()){}
-
-      });
-    }
+    //while(toId - fromId != 0){
+    int i = 0;
+    int userId = user.getId();
+    UserProfile.getAll(toId, (users) -> {
+      List<Object> us = new ArrayList<>();
+      for (UserType u : UserType.values()) {
+        //us.add(new UserElement(u, userId, users));
+      }
+    });
   }
   public void initUsers(int col, int row){
 

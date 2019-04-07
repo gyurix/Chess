@@ -67,7 +67,7 @@ public enum StatType {
         public String toString() {
             return "Win / Games Ratio";
         }
-    }, /**/NAME{
+    }/*NAME{
         public String nick(int userId, List<UserProfile> users){
             for(UserProfile u : users){
                 if(userId == u.getId()){
@@ -80,7 +80,7 @@ public enum StatType {
         public double get(int userId, List<Game> games){
             return 0;
         }
-    };/**/
+    }*/;
 
     public abstract double get(int userId, List<Game> games);
 
