@@ -48,7 +48,7 @@ CREATE TYPE WinnerType AS ENUM ('DRAW', 'P1', 'P2');
 CREATE TABLE League(
   id SERIAL PRIMARY KEY,
   name text,
-  duration INT REFERENCES Championship(id) ON UPDATE CASCADE ON DELETE RESTRICT
+  championship INT REFERENCES Championship(id) ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
 CREATE TABLE LeaguePlayer(

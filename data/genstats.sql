@@ -14,13 +14,12 @@ BEGIN
 END;
 $str$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION rand_res() RETURNS text AS $str$ DECLARE str text;
+CREATE OR REPLACE FUNCTION rand_wt() RETURNS WinnerType AS $wt$ DECLARE wt WinnerType;
 BEGIN
-  SELECT RAND(WinnerType) AS str;
-  RETURN str;
+  SELECT unnest(enum_range(NULL::WinnerType)) ORDER BY random() LIMIT 1 INTO wt;
+  RETURN wt;
 END;
-$str$ LANGUAGE plpqsql;
+$wt$ LANGUAGE plpgsql;
 
-INSERT INTO Game (player1,player2,winner,duration)
-SELECT rand_str(6),rand_str(6),rand_res(),rand_date()
-FROM generate_series(1,5)
+INSERT INTO Duration (start_time,end_time)
+SELECT registered+(5 ||' minutes')::interval,registered+(45 ||' minutes')::interval FROM UserProfile;

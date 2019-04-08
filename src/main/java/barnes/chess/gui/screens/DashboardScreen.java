@@ -1,6 +1,5 @@
 package barnes.chess.gui.screens;
 
-import barnes.chess.db.DB;
 import barnes.chess.db.entity.Game;
 import barnes.chess.db.entity.Rank;
 import barnes.chess.db.entity.UserProfile;
@@ -14,8 +13,11 @@ import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.StringConverter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -24,11 +26,11 @@ import java.util.*;
 import static barnes.chess.db.stats.CollectionInterval.*;
 
 public class DashboardScreen extends AbstractScreen {
-  private boolean canEditRanks;
-  private Label currentUserStatsLabel;
-  private int rankCount;
+  private List<Rank> ranks;
+  private UserElement selectedUser;
   private EnumMap<CollectionInterval, TableView<Object>> statTables = new EnumMap<>(CollectionInterval.class);
   private DatePicker statViewDatePicker;
+  private Label statsLabel;
   private UserProfile user;
   private int userPage;
   private TextField userSearchField;
@@ -43,13 +45,14 @@ public class DashboardScreen extends AbstractScreen {
 
   @Override
   protected void addComponentsToGrid() {
+    grid.add(statsLabel, 3, 0, 2, 1);
     initStats(DAILY, 3, 3);
     initStats(WEEKLY, 4, 3);
     initStats(MONTHLY, 3, 5);
     initStats(OVERALL, 4, 5);
     initUsers();
 
-    grid.add(userSelectorLabel, 1, 1);
+    grid.add(userSelectorLabel, 1, 1, 2, 1);
     grid.add(userSearchField, 1, 2, 2, 1);
     grid.add(usersPrevPage, 1, 5);
     grid.add(usersNextPage, 2, 5);
@@ -68,19 +71,34 @@ public class DashboardScreen extends AbstractScreen {
   }
 
   protected void initComponents() {
-    Rank.withRanks(l -> rankCount = l.size());
+    Rank.withRanks(r -> ranks = r);
     userPage = 1;
-    canEditRanks = user.getRank() == 1;
     usersPrevPage = createButton("prev", this::previousButtonClick);
     usersNextPage = createButton("next", this::nextButtonClick);
-    userSelectorLabel = createLabel("User selector", 10);
-    currentUserStatsLabel = createLabel("Current user stats", 20);
+    userSelectorLabel = createBoldLabel("User selector", 16);
+    statsLabel = createBoldLabel("Stats of user " + user.getNick() + ":", 20);
     userSearchField = createTextField(16);
     userSearchField.setOnAction((e) -> {
       userPage = 1;
       updateUsers();
     });
-    statViewDatePicker = new DatePicker();
+    statViewDatePicker = new DatePicker(LocalDate.now());
+    statViewDatePicker.setConverter(new StringConverter<LocalDate>() {
+      public String toStr(int d) {
+        return StringUtils.leftPad(String.valueOf(d), 2, '0');
+      }
+
+      @Override
+      public String toString(LocalDate date) {
+        return toStr(date.getDayOfMonth()) + "-" + toStr(date.getMonthValue()) + "-" + date.getYear();
+      }
+
+      @Override
+      public LocalDate fromString(String str) {
+        String[] d = str.split("-");
+        return LocalDate.of(Integer.valueOf(d[2]), Integer.valueOf(d[1]), Integer.valueOf(d[0]));
+      }
+    });
   }
 
   @Override
@@ -121,8 +139,10 @@ public class DashboardScreen extends AbstractScreen {
   protected void registerEvents() {
     statViewDatePicker.valueProperty().addListener((observable, oldValue, newValue) -> {
       System.out.println("Date picker value changed - " + newValue);
-      for (CollectionInterval interval : CollectionInterval.values())
-        updateStatsTable(interval, newValue);
+      if (selectedUser == null)
+        updateStatsTable(user.getId(), user.getNick(), newValue);
+      else
+        updateStatsTable(selectedUser.getId(), selectedUser.getName(), newValue);
     });
   }
 
@@ -137,14 +157,16 @@ public class DashboardScreen extends AbstractScreen {
   public void initUsers() {
     UserProfile.getAll((users) -> {
       userTable = createTableView(users);
-      if (!canEditRanks) {
-        userTable.setOnMouseClicked(e -> {
-          UserElement ue = (UserElement) userTable.getSelectionModel().getSelectedItem();
-          DB.getInstance().command((r) ->
-                          ThreadUtil.ui(() -> updateUsers()), "UPDATE UserProfile WHERE id = ? SET rank = ?",
-                  ue.getId(), (ue.getRoleId() + 1) % rankCount);
-        });
-      }
+      userTable.setOnMouseClicked(e -> {
+        UserElement ue = (UserElement) userTable.getSelectionModel().getSelectedItem();
+        updateStatsTable(ue.getId(), ue.getName(), statViewDatePicker.getValue());
+        if (e.getButton() == MouseButton.SECONDARY) {
+          ue.updateRank(ue.getRankId() % ranks.size() + 1, (c) -> {
+            if (c > 0)
+              ThreadUtil.ui(this::updateUsers);
+          });
+        }
+      });
       grid.add(userTable, 1, 3, 2, 2);
     }, "", 0, 10);
   }
@@ -167,17 +189,19 @@ public class DashboardScreen extends AbstractScreen {
     }
   }
 
-  public void updateStatsTable(CollectionInterval interval, LocalDate date) {
+  public void updateStatsTable(int userId, String userName, LocalDate date) {
     Calendar cal = GregorianCalendar.getInstance();
     //noinspection MagicConstant
     cal.set(date.getYear(), date.getMonthValue() - 1, date.getDayOfWeek().ordinal());
-    int userId = user.getId();
-    Game.getGames(user, interval, new Date(cal.getTime().getTime()), (games) -> {
-      List<Object> stats = new ArrayList<>();
-      for (StatType t : StatType.values())
-        stats.add(new StatElement(t, userId, games));
-      statTables.get(interval).setItems(new ObservableListWrapper<>(stats));
-    });
+    for (CollectionInterval interval : CollectionInterval.values()) {
+      Game.getGames(userId, interval, new Date(cal.getTime().getTime()), (games) -> {
+        statsLabel.setText("Stats of user " + userName + ":");
+        List<Object> stats = new ArrayList<>();
+        for (StatType t : StatType.values())
+          stats.add(new StatElement(t, userId, games));
+        statTables.get(interval).setItems(new ObservableListWrapper<>(stats));
+      });
+    }
   }
 
   public void updateUsers() {
@@ -189,7 +213,7 @@ public class DashboardScreen extends AbstractScreen {
 
   public void withStatsTable(CollectionInterval interval, ErrorAcceptedConsumer<TableView> consumer) {
     int userId = user.getId();
-    Game.getGames(user, interval, new Date(System.currentTimeMillis()), (games) -> {
+    Game.getGames(userId, interval, new Date(System.currentTimeMillis()), (games) -> {
       List<Object> stats = new ArrayList<>();
       for (StatType t : StatType.values())
         stats.add(new StatElement(t, userId, games));

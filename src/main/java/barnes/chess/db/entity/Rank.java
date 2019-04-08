@@ -1,18 +1,20 @@
 package barnes.chess.db.entity;
 
 import barnes.chess.db.DB;
+import barnes.chess.utils.ErrorAcceptedConsumer;
 import barnes.chess.utils.ThreadUtil;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
+@ToString
 @Getter
 public class Rank extends AbstractEntity {
-  String name;
+  private String name;
 
-  public static void withRanks(Consumer<List<Rank>> ranks) {
+  public static void withRanks(ErrorAcceptedConsumer<List<Rank>> ranks) {
     DB.getInstance().query((rs) -> {
       List<Rank> out = new ArrayList<>();
       while (rs.next()) {

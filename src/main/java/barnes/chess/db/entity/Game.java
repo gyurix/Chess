@@ -16,9 +16,8 @@ public class Game extends DurationHolder {
   private int player1, player2;
   private WinnerType winner;
 
-  public static void getGames(UserProfile user, CollectionInterval interval, Date date,
+  public static void getGames(int userId, CollectionInterval interval, Date date,
                               ErrorAcceptedConsumer<List<Game>> handler) {
-    int id = user.getId();
     Timestamp start = interval.getStart(date);
     Timestamp end = interval.getEnd(date);
     DB.getInstance().query((rs) -> {
@@ -32,6 +31,6 @@ public class Game extends DurationHolder {
       ThreadUtil.ui(() -> handler.accept(games));
     }, "SELECT * FROM Game INNER JOIN Duration ON Duration.id=Game.duration " +
             "WHERE (Game.player1 = ? OR Game.player2 = ?) AND" +
-            " Duration.end_time >= ? AND Duration.end_time < ? ORDER BY Duration.end_time", id, id, start, end);
+            " Duration.end_time >= ? AND Duration.end_time < ? ORDER BY Duration.end_time", userId, userId, start, end);
   }
 }

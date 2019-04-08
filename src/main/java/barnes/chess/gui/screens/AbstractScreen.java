@@ -1,5 +1,6 @@
 package barnes.chess.gui.screens;
 
+import barnes.chess.db.entity.SkipField;
 import barnes.chess.gui.ResourceManager;
 import barnes.chess.utils.ErrorAcceptedFunction;
 import com.sun.javafx.collections.ObservableListWrapper;
@@ -113,6 +114,9 @@ public abstract class AbstractScreen {
       Object o = data.get(0);
       Class cl = o.getClass();
       for (Field f : cl.getDeclaredFields()) {
+        SkipField skipField = f.getAnnotation(SkipField.class);
+        if (skipField != null)
+          continue;
         Class fieldType = f.getType();
         String fieldName = f.getName();
         fieldName = Character.toUpperCase(fieldName.charAt(0)) + fieldName.substring(1);
