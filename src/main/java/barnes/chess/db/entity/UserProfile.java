@@ -7,6 +7,7 @@ import barnes.chess.utils.ThreadUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class UserProfile extends AbstractEntity {
     DB.getInstance().query((rs) -> {
       List<UserElement> users = new ArrayList<>();
       while (rs.next())
-        users.add(new UserElement(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4)));
+        users.add(new UserElement(StringUtils.leftPad(String.valueOf(rs.getInt(1)), 7, ' '), rs.getString(2), rs.getString(3), rs.getInt(4)));
       ThreadUtil.ui(() -> handler.accept(users));
       rs.close();
     }, "SELECT UserProfile.id,UserProfile.nick,Rank.name,Rank.id FROM UserProfile LEFT JOIN Rank ON UserProfile.rank=Rank.id" +

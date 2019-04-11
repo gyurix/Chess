@@ -32,6 +32,7 @@ public class DashboardScreen extends AbstractScreen {
   private DatePicker statViewDatePicker;
   private Label statsLabel;
   private UserProfile user;
+  private boolean canEditRanks;
   private int userPage;
   private TextField userSearchField;
   private Label userSelectorLabel;
@@ -73,6 +74,7 @@ public class DashboardScreen extends AbstractScreen {
   protected void initComponents() {
     Rank.withRanks(r -> ranks = r);
     userPage = 1;
+    canEditRanks = user.getRank() == 1;
     usersPrevPage = createButton("prev", this::previousButtonClick);
     usersNextPage = createButton("next", this::nextButtonClick);
     userSelectorLabel = createBoldLabel("User selector", 16);
@@ -142,7 +144,7 @@ public class DashboardScreen extends AbstractScreen {
       if (selectedUser == null)
         updateStatsTable(user.getId(), user.getNick(), newValue);
       else
-        updateStatsTable(selectedUser.getId(), selectedUser.getName(), newValue);
+        updateStatsTable(Integer.valueOf(selectedUser.getId().trim()), selectedUser.getName(), newValue);
     });
   }
 
@@ -159,8 +161,8 @@ public class DashboardScreen extends AbstractScreen {
       userTable = createTableView(users);
       userTable.setOnMouseClicked(e -> {
         UserElement ue = (UserElement) userTable.getSelectionModel().getSelectedItem();
-        updateStatsTable(ue.getId(), ue.getName(), statViewDatePicker.getValue());
-        if (e.getButton() == MouseButton.SECONDARY) {
+        updateStatsTable(Integer.valueOf(ue.getId().trim()), ue.getName(), statViewDatePicker.getValue());
+        if (e.getButton() == MouseButton.SECONDARY && canEditRanks && Integer.valueOf(ue.getId().trim()) != user.getId()) {
           ue.updateRank(ue.getRankId() % ranks.size() + 1, (c) -> {
             if (c > 0)
               ThreadUtil.ui(this::updateUsers);
@@ -218,6 +220,7 @@ public class DashboardScreen extends AbstractScreen {
       for (StatType t : StatType.values())
         stats.add(new StatElement(t, userId, games));
       consumer.accept(createTableView(stats));
+      updateStatsTable(userId, user.getNick(), statViewDatePicker.getValue());
     });
   }
 }
