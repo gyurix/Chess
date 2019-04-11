@@ -25,4 +25,4 @@ END;
 $wt$ LANGUAGE plpgsql;
 
 INSERT INTO Game (player1,player2,winner,duration)
-SELECT id,id+1,rand_wt(),id FROM LeaguePlayer LIMIT 149000
+SELECT id,id+floor(random(1000)),rand_wt(),id FROM LeaguePlayer LIMIT 149000

@@ -84,8 +84,15 @@ public abstract class AbstractEntity {
       id = rs.getInt("id");
       for (Field f : fields) {
         Object o = rs.getObject(f.getName());
-        if (o != null)
-          f.set(this, o);
+        if (o != null) {
+          if (f.getType().isEnum())
+            for (Object ec : f.getType().getEnumConstants()) {
+              if (o.equals(ec.toString()))
+                f.set(this, ec);
+            }
+          else
+            f.set(this, o);
+        }
       }
     } catch (Throwable e) {
       e.printStackTrace();
