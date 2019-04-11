@@ -14,6 +14,9 @@ BEGIN
 END;
 $str$ LANGUAGE plpgsql;
 
+INSERT INTO Duration (start_time,end_time)
+SELECT registered+(5 ||' minutes')::interval,registered+(45 ||' minutes')::interval FROM UserProfile;
+
 CREATE OR REPLACE FUNCTION rand_wt() RETURNS WinnerType AS $wt$ DECLARE wt WinnerType;
 BEGIN
   SELECT unnest(enum_range(NULL::WinnerType)) ORDER BY random() LIMIT 1 INTO wt;
@@ -21,5 +24,5 @@ BEGIN
 END;
 $wt$ LANGUAGE plpgsql;
 
-INSERT INTO Duration (start_time,end_time)
-SELECT registered+(5 ||' minutes')::interval,registered+(45 ||' minutes')::interval FROM UserProfile;
+INSERT INTO Game (player1,player2,winner,duration)
+SELECT id,id+1,rand_wt(),id FROM LeaguePlayer LIMIT 149000
