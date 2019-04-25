@@ -39,6 +39,7 @@ public class DashboardScreen extends AbstractScreen {
   private TableView userTable;
   private Button usersNextPage;
   private Button usersPrevPage;
+  private Button friendListShow;
 
   public DashboardScreen(Stage stage, UserProfile user) {
     super(stage, user);
@@ -55,6 +56,7 @@ public class DashboardScreen extends AbstractScreen {
 
     grid.add(userSelectorLabel, 1, 1, 2, 1);
     grid.add(userSearchField, 1, 2, 2, 1);
+    grid.add(friendListShow, 3, 6);
     grid.add(usersPrevPage, 1, 5);
     grid.add(usersNextPage, 2, 5);
 
@@ -75,6 +77,7 @@ public class DashboardScreen extends AbstractScreen {
     Rank.withRanks(r -> ranks = r);
     userPage = 1;
     canEditRanks = user.getRank() == 1;
+    friendListShow = createButton("friends", this::friendShowButtonClick);
     usersPrevPage = createButton("prev", this::previousButtonClick);
     usersNextPage = createButton("next", this::nextButtonClick);
     userSelectorLabel = createBoldLabel("User selector", 16);
@@ -104,24 +107,24 @@ public class DashboardScreen extends AbstractScreen {
   }
 
   @Override
-  protected void initGrid() {
-    super.initGrid();
-    grid.setVgap(5);
-    grid.getColumnConstraints().addAll(col(11),
-            col(13, HPos.LEFT),
-            col(13, HPos.RIGHT),
-            col(26, HPos.CENTER),
-            col(26, HPos.CENTER),
-            col(11));
+    protected void initGrid() {
+        super.initGrid();
+        grid.setVgap(5);
+        grid.getColumnConstraints().addAll(col(11),
+                col(13, HPos.LEFT),
+                col(13, HPos.RIGHT),
+                col(26, HPos.CENTER),
+                col(26, HPos.CENTER),
+                col(11));
 
-    grid.getRowConstraints().addAll(row(11),
-            row(5, VPos.CENTER),
-            row(6, VPos.BOTTOM),
-            row(30, VPos.CENTER),
-            row(6, VPos.BOTTOM),
-            row(30, VPos.CENTER),
-            row(11));
-  }
+        grid.getRowConstraints().addAll(row(11),
+                row(5, VPos.CENTER),
+                row(6, VPos.BOTTOM),
+                row(30, VPos.CENTER),
+                row(6, VPos.BOTTOM),
+                row(30, VPos.CENTER),
+                row(11));
+    }
 
   @Override
   protected void initScreen(Object... args) {
@@ -176,6 +179,12 @@ public class DashboardScreen extends AbstractScreen {
     }, "", 0, 10);
   }
 
+
+  private void friendShowButtonClick(Object o) {
+      System.out.println("Waiting for opening Friends Screen...");
+      new FriendScreen(this, stage, user);
+  }
+
   private void nextButtonClick(Object o) {
     if (userTable == null)
       return;
@@ -184,6 +193,7 @@ public class DashboardScreen extends AbstractScreen {
       updateUsers();
     }
   }
+
 
   private void previousButtonClick(Object o) {
     if (userTable == null)

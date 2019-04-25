@@ -47,6 +47,9 @@ public abstract class AbstractScreen {
     show(stage);
   }
 
+  protected AbstractScreen() {
+  }
+
   protected abstract void addComponentsToGrid();
 
   public ColumnConstraints col(double pct) {
