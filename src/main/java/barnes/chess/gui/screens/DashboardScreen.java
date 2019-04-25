@@ -161,6 +161,9 @@ public class DashboardScreen extends AbstractScreen {
       userTable = createTableView(users);
       userTable.setOnMouseClicked(e -> {
         UserElement ue = (UserElement) userTable.getSelectionModel().getSelectedItem();
+        if(ue == null){
+          return;
+        }
         updateStatsTable(Integer.valueOf(ue.getId().trim()), ue.getName(), statViewDatePicker.getValue());
         if (e.getButton() == MouseButton.SECONDARY && canEditRanks && Integer.valueOf(ue.getId().trim()) != user.getId()) {
           ue.updateRank(ue.getRankId() % ranks.size() + 1, (c) -> {
