@@ -24,9 +24,9 @@ public class ChessLauncher extends Application {
   @Override
   public void start(Stage stage) {
 
-      Calendar cal = Calendar.getInstance();
-      cal.setTimeInMillis(System.currentTimeMillis() - 259200000);
-      System.out.println((cal.get(Calendar.DAY_OF_WEEK)+5)%7);
+    Calendar cal = Calendar.getInstance();
+    cal.setTimeInMillis(System.currentTimeMillis() - 259200000);
+    System.out.println((cal.get(Calendar.DAY_OF_WEEK) + 5) % 7);
 
     System.out.println("Started");
     DB db = new DB(DatabaseConfig.builder()

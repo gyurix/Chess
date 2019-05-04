@@ -4,7 +4,7 @@ import barnes.chess.db.entity.SkipField;
 import barnes.chess.gui.ResourceManager;
 import barnes.chess.utils.ErrorAcceptedFunction;
 import com.sun.javafx.collections.ObservableListWrapper;
-import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -101,9 +101,11 @@ public abstract class AbstractScreen {
     return out;
   }
 
-  public TableColumn<Object, String> createTableCol(String name, ErrorAcceptedFunction<Object, Object> dataGenerator) {
-    TableColumn<Object, String> col = new TableColumn<>(name);
-    col.setCellValueFactory(c -> new ReadOnlyStringWrapper(String.valueOf(dataGenerator.toFunction().apply(c.getValue()))));
+  public TableColumn<Object, Object> createTableCol(String name, ErrorAcceptedFunction<Object, Object> dataGenerator) {
+    TableColumn<Object, Object> col = new TableColumn<>(name);
+    col.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(dataGenerator.toFunction().apply(c.getValue())));
+    //noinspection unchecked
+    col.setComparator((o1, o2) -> o1 instanceof Comparable ? ((Comparable) o1).compareTo(o2) : String.valueOf(o1).compareTo(String.valueOf(o2)));
     col.setMaxWidth(10000);
     return col;
   }
