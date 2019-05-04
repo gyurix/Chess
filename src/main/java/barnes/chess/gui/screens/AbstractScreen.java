@@ -21,9 +21,12 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.StringConverter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.time.LocalDate;
 import java.util.List;
 
 import static javafx.scene.control.Alert.AlertType.ERROR;
@@ -65,6 +68,12 @@ public abstract class AbstractScreen {
     return col;
   }
 
+  public Label createBoldLabel(String text, double fontSize) {
+    Label out = new Label(text);
+    out.setFont(Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, fontSize));
+    return out;
+  }
+
   public Button createButton(String text, EventHandler<ActionEvent> onClick) {
     Button out = new Button(text);
     out.setFont(Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 16));
@@ -74,15 +83,30 @@ public abstract class AbstractScreen {
     return out;
   }
 
-  public Label createLabel(String text, double fontSize) {
-    Label out = new Label(text);
-    out.setFont(Font.font(fontSize));
+  protected DatePicker createDatePicker() {
+    DatePicker out = new DatePicker(LocalDate.now());
+    out.setConverter(new StringConverter<LocalDate>() {
+      public String toStr(int d) {
+        return StringUtils.leftPad(String.valueOf(d), 2, '0');
+      }
+
+      @Override
+      public String toString(LocalDate date) {
+        return toStr(date.getDayOfMonth()) + "-" + toStr(date.getMonthValue()) + "-" + date.getYear();
+      }
+
+      @Override
+      public LocalDate fromString(String str) {
+        String[] d = str.split("-");
+        return LocalDate.of(Integer.valueOf(d[2]), Integer.valueOf(d[1]), Integer.valueOf(d[0]));
+      }
+    });
     return out;
   }
 
-  public Label createBoldLabel(String text, double fontSize) {
+  public Label createLabel(String text, double fontSize) {
     Label out = new Label(text);
-    out.setFont(Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, fontSize));
+    out.setFont(Font.font(fontSize));
     return out;
   }
 
@@ -203,5 +227,15 @@ public abstract class AbstractScreen {
 
   public Alert showInfo(String title, String description) {
     return showAlert(INFORMATION, title, description);
+  }
+
+  public long toTime(String text) {
+    String[] d = text.split(":");
+    long out = 0;
+    out += Long.valueOf(d[0]) * 3600000;
+    out += Long.valueOf(d[1]) * 60000;
+    if (d.length > 2)
+      out += Long.valueOf(d[2]) * 1000;
+    return out;
   }
 }

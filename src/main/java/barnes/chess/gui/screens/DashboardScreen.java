@@ -17,8 +17,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import javafx.util.StringConverter;
-import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -88,23 +86,7 @@ public class DashboardScreen extends AbstractScreen {
       userPage = 1;
       updateUsers();
     });
-    statViewDatePicker = new DatePicker(LocalDate.now());
-    statViewDatePicker.setConverter(new StringConverter<LocalDate>() {
-      public String toStr(int d) {
-        return StringUtils.leftPad(String.valueOf(d), 2, '0');
-      }
-
-      @Override
-      public String toString(LocalDate date) {
-        return toStr(date.getDayOfMonth()) + "-" + toStr(date.getMonthValue()) + "-" + date.getYear();
-      }
-
-      @Override
-      public LocalDate fromString(String str) {
-        String[] d = str.split("-");
-        return LocalDate.of(Integer.valueOf(d[2]), Integer.valueOf(d[1]), Integer.valueOf(d[0]));
-      }
-    });
+    statViewDatePicker = createDatePicker();
   }
 
   @Override

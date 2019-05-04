@@ -15,7 +15,7 @@ public abstract class AbstractEntity {
   private String fieldValuePlaceholders;
   private Field[] fields;
   @Getter
-  private int id;
+  protected int id;
 
   public AbstractEntity() {
     initFields();

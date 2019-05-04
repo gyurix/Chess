@@ -56,17 +56,13 @@ Administrátor má zoznám všetkých hračov - ich prihlasovacie meno, a pri to
 
 ## 4. Prehľadávateľný zoznam hier, na ktorých používateľ participoval
 
-Použivateľ bude moc pozrieť zoznam svojích hier, ktoré hrával. 
-Existujú 4. zoznámy:
-- denné partie - zoznám partií, ktoré hral v jeden deň
-- týždenné partie - zoznám partií, ktoré hral v týždeň
-- mesiačné partie - zoznám partií, ktoré hral v mesiac
-- celkový zoznám partií
+Použivateľ bude moc pozrieť zoznam svojích hier, ktoré hrával.
 
-Každý zoznám bude obsahovať:
+Každý zoznam obsahuje:
 - použivatelské mena dvoch hračov, ktoré sa zučastnili v partie
 - výsledok - 1-0, 1/2 alebo 0-1
-- čas, kedy bola partia výtvorená
+- čas, kedy bola hra začatá a ukončená
+- administrátoria vedia pridávať hry
 
 ## 5. Priateľský systém
 
