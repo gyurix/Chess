@@ -205,7 +205,7 @@ public class DashboardScreen extends AbstractScreen {
   private void nextButtonClick(Object o) {
     if (userTable == null)
       return;
-    if (userTable.getItems().size() == 10) {
+    if (userTable.getItems().size() == 20) {
       ++userPage;
       updateUsers();
     }

@@ -56,7 +56,7 @@ public class UserProfile extends AbstractEntity {
             "          Rank.name AS rankName, Rank.id AS rankId" +
             "       FROM UserProfile" +
             "       LEFT JOIN Rank ON UserProfile.rank=Rank.id" +
-            "       INNER JOIN Game ON Game.player1=UserProfile.id" +
+            "       LEFT JOIN Game ON Game.player1=UserProfile.id" +
             "       WHERE UserProfile.nick LIKE ? OFFSET " + from + " LIMIT " + count + ") AS s1 INNER JOIN " +
             " (SELECT DISTINCT UserProfile.id AS userId, UserProfile.nick AS name," +
             "          count(*) OVER (PARTITION BY UserProfile.id) AS games, " +
