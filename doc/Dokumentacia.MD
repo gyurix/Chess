@@ -89,17 +89,20 @@ S priateľským systémom sme pridali možnosť pridania a odstránenia priateľ
 1. Vyhľadáme používatelské meno pridateľného priatelovi
 2. Klikneme na ňu pravým tlačitkom
 3. Klikneme na `Add friend` tlačítko
+
 ![AddFriend](https://github.com/fiit-dbs-2019/dbs2019-project-assignment-barath-nestorenko/raw/master/doc/img/AddFriend.png)
 
 **Odstránenie priateľou:**
 1. Klikneme na tlačítko `friends`
 2. Klikneme pravím tlačítkom na používatelské meno odstrániteľného priateľa
+
 ![RemoveFriend](https://github.com/fiit-dbs-2019/dbs2019-project-assignment-barath-nestorenko/raw/master/doc/img/RemoveFriend.png)
 
 **Zobrazenie priateľou iných hráčov:**
 1. Vyhľadáme používatelské meno hráča, ktorého priateľovi chceme pozrieť 
 2. Klikneme na ňu pravým tlačitkom
 3. Klikneme na `Friends` tlačítko
+
 ![FriendListOthers](https://github.com/fiit-dbs-2019/dbs2019-project-assignment-barath-nestorenko/raw/master/doc/img/FriendListOthers.png)
 
 
