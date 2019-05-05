@@ -61,7 +61,7 @@ public class DB {
     System.out.println("[DBReq] Data: " + Arrays.toString(data));
     PreparedStatement ps = checkConnection().prepareStatement(query);
     for (int i = 0; i < data.length; ++i)
-      ps.setObject(i + 1, data[i].getClass().isEnum() ? data[i].toString() : data[i]);
+      ps.setObject(i + 1, data[i]);
     return ps;
   }
 

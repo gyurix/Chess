@@ -20,7 +20,8 @@ public class Friendship extends DurationHolder {
   public Friendship(int user1, int user2, ErrorAcceptedRunnable onFinish) {
     this.user1 = user1;
     this.user2 = user2;
-    Duration dur = new Duration(new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()));
+    Duration dur = new Duration(new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()
+            + 86400L * 365L * 1000L)); //Make new friends expire after 1 year
     dur.insert(() -> {
       duration = dur.id;
       ThreadUtil.async(() -> insert(onFinish));

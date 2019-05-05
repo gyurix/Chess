@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractEntity {
-  private String fieldNames;
-  private String fieldValuePlaceholders;
+  protected String fieldNames;
+  protected String fieldValuePlaceholders;
   private Field[] fields;
   @Getter
   protected int id;

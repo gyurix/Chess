@@ -18,6 +18,7 @@ import java.util.List;
 @Getter
 public class Game extends DurationHolder {
   private int player1, player2;
+  @SkipField
   private WinnerType winner;
 
   public Game(int id) {
@@ -33,6 +34,20 @@ public class Game extends DurationHolder {
       duration = dur.getId();
       ThreadUtil.async(() -> insert(onInsert));
     });
+  }
+
+  @Override
+  public void insert(ErrorAcceptedRunnable runnable) {
+    DB.getInstance().query((rs) -> {
+              rs.next();
+              id = rs.getInt(1);
+              System.out.println("Inserted " + getTable() + " #" + id);
+              rs.close();
+              if (runnable != null)
+                ThreadUtil.ui(runnable);
+            },
+            "INSERT INTO " + getTable() + "  ( player1,player2,winner,duration ) " +
+                    "VALUES (" + player1 + "," + player2 + ",'" + winner + "'," + duration + ") RETURNING id");
   }
 
   public static void getGames(int userId, CollectionInterval interval, Date date,
