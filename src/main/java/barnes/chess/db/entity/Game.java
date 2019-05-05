@@ -86,8 +86,8 @@ public class Game extends DurationHolder {
         ThreadUtil.ui(() -> handler.accept(games));
       }, "SELECT Game.id,UserProfile.nick,Duration.start_time,Duration.end_time,Game.winner" +
               " FROM Game INNER JOIN Duration ON Duration.id=Game.duration" +
-              " INNER JOIN UserProfile ON Game.player2 = UserProfile.id" +
-              " WHERE (Game.player1 = ?) " + " ORDER BY Duration.end_time", userId);
+              " INNER JOIN UserProfile ON Game.player1 = UserProfile.id" +
+              " WHERE (Game.player2 = ?) " + " ORDER BY Duration.end_time", userId);
     }, "SELECT Game.id,UserProfile.nick,Duration.start_time,Duration.end_time,Game.winner" +
             " FROM Game INNER JOIN Duration ON Duration.id=Game.duration" +
             " INNER JOIN UserProfile ON Game.player2 = UserProfile.id" +
