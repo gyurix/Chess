@@ -40,7 +40,7 @@ SELECT (array['Smith','Anderson','Clark','Wright','Mitchell','Johnson','Thomas',
 'Sabertooth','Coma','Scratch','Crusher','Sentinel','Diesel','Speed','Doctor','Spike','Dreads','Subwoofer','Frankenstein',
 'Thunderbird','Froggy','Tornado','General','Troubleshoot','Godzilla','Vice','Hammerhead','Viper','HandyMan','Wasp',
 'HoundDog','Wizard','Indominus','Zodiac','KingKong'])[floor(random() * 50 + 1)],
-'688787D8FF144C502C7F5CFFAAFE2CC588D86079F9DE88304C26B0CB99CE91C6',1,rand_date()
+'688787D8FF144C502C7F5CFFAAFE2CC588D86079F9DE88304C26B0CB99CE91C6',floor(random() * 10)/4+1,rand_date()
 FROM generate_series(1,25000);
 
 -- Generate championships
@@ -83,7 +83,7 @@ DO $$
 BEGIN
    FOR counter IN 1..15 LOOP
       INSERT INTO Friendship (user1,user2,duration)
-      SELECT id,floor(id+random()*1000),25010+id FROM UserProfile LIMIT 14000;
+      SELECT id,floor(id+random()*1000),10000+floor(id+random()*1000) FROM UserProfile LIMIT 14000;
    END LOOP;
 END; $$;
 

@@ -28,7 +28,6 @@ import static barnes.chess.db.stats.CollectionInterval.*;
 import static javafx.scene.control.Alert.AlertType.INFORMATION;
 
 public class DashboardScreen extends AbstractScreen {
-  private boolean canEditRanks;
   private Button friendListShow;
   private List<Rank> ranks;
   private Set<String> permissions = new HashSet<>();
@@ -51,7 +50,10 @@ public class DashboardScreen extends AbstractScreen {
 
   @Override
   protected void addComponentsToGrid() {
-    user.getPermissions((perms) -> permissions = perms);
+    user.getPermissions((perms) -> {
+      permissions = perms;
+      System.out.println("Loaded permissions: " + perms);
+    });
     grid.add(statsLabel, 3, 0, 2, 1);
     initStats(DAILY, 3, 3);
     initStats(WEEKLY, 4, 3);
@@ -81,7 +83,6 @@ public class DashboardScreen extends AbstractScreen {
   protected void initComponents() {
     Rank.withRanks(r -> ranks = r);
     userPage = 1;
-    canEditRanks = user.getRank() == 1;
     friendListShow = createButton("friends", this::friendShowButtonClick);
     usersPrevPage = createButton("prev", this::previousButtonClick);
     usersNextPage = createButton("next", this::nextButtonClick);
@@ -147,8 +148,10 @@ public class DashboardScreen extends AbstractScreen {
   }
 
   private void friendShowButtonClick(Object o) {
-    new FriendScreen(UserElement.builder().id(String.valueOf(user.getId())).build(), true);
-    showAlert(INFORMATION, "Loading friends...", "Loading the list of your friends");
+    new FriendScreen(UserElement.builder()
+            .id(String.valueOf(user.getId()))
+            .name(user.getNick())
+            .build(), true);
   }
 
   public void initStats(CollectionInterval interval, int col, int row) {
@@ -198,22 +201,21 @@ public class DashboardScreen extends AbstractScreen {
   private void showContextMenu(MouseEvent event, UserElement ue) {
     ContextMenu contextMenu = new ContextMenu();
     List<MenuItem> items = contextMenu.getItems();
-    if (canEditRanks && Integer.valueOf(ue.getId().trim()) != user.getId()) {
-      if (permissions.contains("viewprofile"))
-        items.add(createMenuItem("Profile",
-                () -> new UserProfileScreen(new Stage(), Integer.valueOf(ue.getId().trim()), this)));
-      items.add(createMenuItem("Friends",
-              () -> new FriendScreen(ue, false)));
-      items.add(createMenuItem("Add as friend",
-              () -> new Friendship(user.getId(), Integer.valueOf(selectedUser.getId().trim()),
-                      () -> showAlert(INFORMATION, "Added friend", "Added friend " + ue.getName()))));
-      if (permissions.contains("changerank"))
-        items.add(createMenuItem("Change rank", () ->
-                ue.updateRank(ue.getRankId() % ranks.size() + 1, (c) -> {
-                  if (c > 0)
-                    ThreadUtil.ui(this::updateUsers);
-                })));
-    }
+
+    if (permissions.contains("viewprofile"))
+      items.add(createMenuItem("Profile",
+              () -> new UserProfileScreen(ue, permissions.contains("editprofile"))));
+    items.add(createMenuItem("Friends",
+            () -> new FriendScreen(ue, false)));
+    items.add(createMenuItem("Add as friend",
+            () -> new Friendship(user.getId(), Integer.valueOf(selectedUser.getId().trim()),
+                    () -> showAlert(INFORMATION, "Added friend", "Added friend " + ue.getName()))));
+    if (Integer.valueOf(ue.getId().trim()) != user.getId() && permissions.contains("changerank"))
+      items.add(createMenuItem("Change rank", () ->
+              ue.updateRank(ue.getRankId() % ranks.size() + 1, (c) -> {
+                if (c > 0)
+                  ThreadUtil.ui(this::updateUsers);
+              })));
     contextMenu.show(userTable, event.getScreenX(), event.getScreenY());
   }
 

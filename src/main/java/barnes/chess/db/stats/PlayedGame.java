@@ -11,8 +11,8 @@ public class PlayedGame {
   @SkipField
   private Game game;
   private String opponent;
+  private String timeBegin;
   private String timeEnded;
-  private String timeStarted;
   private WinnerType winner;
 
   public PlayedGame(ResultSet rs, boolean inverseWinnerType) throws SQLException {
@@ -24,9 +24,9 @@ public class PlayedGame {
             inverseWinnerType);
   }
 
-  public PlayedGame(Game game, String opponent, String timeStarted, String timeEnded, WinnerType winner, boolean inverseWinnerType) {
+  public PlayedGame(Game game, String opponent, String timeBegin, String timeEnded, WinnerType winner, boolean inverseWinnerType) {
     this.game = game;
-    this.timeStarted = timeStarted;
+    this.timeBegin = timeBegin;
     this.timeEnded = timeEnded;
     this.opponent = opponent;
     this.winner = inverseWinnerType ? winner.inverse() : winner;

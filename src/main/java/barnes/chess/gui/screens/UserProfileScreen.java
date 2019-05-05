@@ -4,11 +4,13 @@ import barnes.chess.db.entity.Game;
 import barnes.chess.db.entity.UserProfile;
 import barnes.chess.db.entity.WinnerType;
 import barnes.chess.db.stats.PlayedGame;
+import barnes.chess.db.stats.UserElement;
 import javafx.event.ActionEvent;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -21,15 +23,16 @@ import static javafx.scene.control.Alert.AlertType.ERROR;
 import static javafx.scene.control.Alert.AlertType.INFORMATION;
 
 public class UserProfileScreen extends AbstractScreen {
+  private boolean editPerm;
   private TextField opponent, startTime, endTime;
   private DashboardScreen parent;
   private TableView<PlayedGame> playedGames;
   private DatePicker start, end;
-  private int userId;
+  private UserElement user;
   private ComboBox<WinnerType> winnerType;
 
-  public UserProfileScreen(Stage stage, Object... args) {
-    super(stage, args);
+  public UserProfileScreen(Object... args) {
+    super(new Stage(), args);
   }
 
   @Override
@@ -59,66 +62,6 @@ public class UserProfileScreen extends AbstractScreen {
   @Override
   protected int getWidth() {
     return 920;
-  }
-
-  @Override
-  protected void initComponents() {
-    title = "Chess Stats - Profile of user " + parent.getSelectedUser().getName();
-    Game.getPlayedGames(userId, (games) -> {
-      playedGames = createTableView(games);
-      playedGames.setOnMouseClicked((e) -> {
-        PlayedGame g = playedGames.getSelectionModel().getSelectedItem();
-        if (g != null && e.isSecondaryButtonDown()) {
-          g.delete();
-          updatePlayedGames();
-        }
-      });
-      grid.add(playedGames, 1, 1, 7, 1);
-    });
-
-  }
-
-  @Override
-  protected void initGrid() {
-    grid.setHgap(5);
-    grid.getRowConstraints().addAll(
-            row(5),
-            row(79),
-            row(3),
-            row(8),
-            row(5)
-    );
-    grid.getColumnConstraints().addAll(
-            col(4.5),
-            col(13),
-            col(13),
-            col(13),
-            col(13),
-            col(13),
-            col(13),
-            col(13),
-            col(4.5)
-    );
-  }
-
-  @Override
-  protected void initScreen(Object... args) {
-    this.userId = (int) args[0];
-    this.parent = (DashboardScreen) args[1];
-  }
-
-  @Override
-  protected void onClose(WindowEvent e) {
-    parent.show(stage);
-  }
-
-  @Override
-  protected void populateComponents() {
-  }
-
-  @Override
-  protected void registerEvents() {
-
   }
 
   private void addGame(ActionEvent e) {
@@ -157,10 +100,69 @@ public class UserProfileScreen extends AbstractScreen {
         showAlert(ERROR, "Player not found", "Player " + opponent.getText() + " was not found.");
         return;
       }
-      new Game(userId, u.getId(), winnerType.getValue(), finalStartTime, finalEndTime,
+      new Game(Integer.valueOf(user.getId().trim()), u.getId(), winnerType.getValue(), finalStartTime, finalEndTime,
               () -> showAlert(INFORMATION, "Added game", "Added game to the database"));
 
     });
+  }
+
+  @Override
+  protected void initGrid() {
+    grid.setHgap(5);
+    grid.getRowConstraints().addAll(
+            row(5),
+            row(79),
+            row(3),
+            row(8),
+            row(5)
+    );
+    grid.getColumnConstraints().addAll(
+            col(4.5),
+            col(13),
+            col(13),
+            col(13),
+            col(13),
+            col(13),
+            col(13),
+            col(13),
+            col(4.5)
+    );
+  }
+
+  @Override
+  protected void initComponents() {
+    title = "Chess Stats - Profile of user " + user.getName();
+    Game.getPlayedGames(Integer.valueOf(user.getId().trim()), (games) -> {
+      playedGames = createTableView(games);
+      playedGames.setOnMouseClicked((e) -> {
+        PlayedGame g = playedGames.getSelectionModel().getSelectedItem();
+        if (g != null && editPerm && e.getButton() == MouseButton.SECONDARY) {
+          g.delete();
+          updatePlayedGames();
+        }
+      });
+      grid.add(playedGames, 1, 1, 7, 1);
+    });
+
+  }
+
+  @Override
+  protected void onClose(WindowEvent e) {
+  }
+
+  @Override
+  protected void populateComponents() {
+  }
+
+  @Override
+  protected void registerEvents() {
+
+  }
+
+  @Override
+  protected void initScreen(Object... args) {
+    this.user = (UserElement) args[0];
+    this.editPerm = (boolean) args[1];
   }
 
   private <T extends Enum<T>> ComboBox<T> createComboBox(Class<T> cl) {
@@ -184,7 +186,7 @@ public class UserProfileScreen extends AbstractScreen {
   }
 
   private void updatePlayedGames() {
-    Game.getPlayedGames(userId, (games) -> {
+    Game.getPlayedGames(Integer.valueOf(user.getId().trim()), (games) -> {
       List<PlayedGame> gameList = playedGames.getItems();
       gameList.clear();
       gameList.addAll(games);

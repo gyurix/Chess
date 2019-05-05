@@ -4,6 +4,7 @@ import barnes.chess.utils.ErrorAcceptedConsumer;
 import lombok.Getter;
 
 import java.sql.*;
+import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static barnes.chess.utils.ThreadUtil.async;
@@ -57,6 +58,7 @@ public class DB {
   }
 
   private PreparedStatement prepare(String query, Object... data) throws SQLException {
+    System.out.println("[DBReq] Data: " + Arrays.toString(data));
     PreparedStatement ps = checkConnection().prepareStatement(query);
     for (int i = 0; i < data.length; ++i)
       ps.setObject(i + 1, data[i].getClass().isEnum() ? data[i].toString() : data[i]);

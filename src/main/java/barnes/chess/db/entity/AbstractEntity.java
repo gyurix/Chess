@@ -50,7 +50,7 @@ public abstract class AbstractEntity {
     List<Field> fieldList = new ArrayList<>();
     Class cl = getClass();
     while (cl != AbstractEntity.class) {
-      for (Field f : getClass().getDeclaredFields()) {
+      for (Field f : cl.getDeclaredFields()) {
         f.setAccessible(true);
         if (f.getAnnotation(SkipField.class) == null) {
           valuePlaceholderOut.append(",?");
@@ -75,7 +75,7 @@ public abstract class AbstractEntity {
               if (runnable != null)
                 ThreadUtil.ui(runnable);
             },
-            "INSERT INTO " + getTable() + "  (" + fieldNames + ")" +
+            "INSERT INTO " + getTable() + "  (" + fieldNames + ") " +
                     "VALUES (" + fieldValuePlaceholders + ") RETURNING id", getFieldValues());
   }
 

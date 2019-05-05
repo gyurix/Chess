@@ -35,18 +35,6 @@ public class UserProfile extends AbstractEntity {
     p.insert(() -> handler.accept(p));
   }
 
-  public static void with(String nick, ErrorAcceptedConsumer<UserProfile> handler) {
-    DB.getInstance().query((rs) -> {
-      if (rs.next()) {
-        UserProfile profile = new UserProfile();
-        profile.load(rs);
-        ThreadUtil.ui(() -> handler.accept(profile));
-      } else
-        ThreadUtil.ui(() -> handler.accept(null));
-      rs.close();
-    }, "SELECT * FROM UserProfile WHERE nick=? LIMIT 1", nick);
-  }
-
   public static void getAll(ErrorAcceptedConsumer<List<UserElement>> handler, String query, int from, int count) {
     query = "%" + query + "%";
     String cmd = "SELECT s1.userId,s1.name,s1.rankId,s1.rankName,s1.games+s2.games,s1.wins+s2.wins,s1.loses+s2.loses,s1.draws+s2.draws FROM" +
@@ -59,7 +47,7 @@ public class UserProfile extends AbstractEntity {
             "       FROM UserProfile" +
             "       LEFT JOIN Rank ON UserProfile.rank=Rank.id" +
             "       LEFT JOIN Game ON Game.player1=UserProfile.id" +
-            "       WHERE UserProfile.nick LIKE ? OFFSET " + from + " LIMIT " + count + ") AS s1 INNER JOIN " +
+            "       WHERE UserProfile.nick LIKE '" + query + "' OFFSET " + from + " LIMIT " + count + ") AS s1 LEFT JOIN " +
             " (SELECT DISTINCT UserProfile.id AS userId, UserProfile.nick AS name," +
             "          count(*) OVER (PARTITION BY UserProfile.id) AS games, " +
             "          count(case when Game.winner = 'P2' then 1 else null end) OVER (PARTITION BY Game.player2) AS wins," +
@@ -67,7 +55,7 @@ public class UserProfile extends AbstractEntity {
             "          count(case when Game.winner = 'DRAW' then 1 else null end) OVER (PARTITION BY Game.player2) AS draws" +
             "       FROM UserProfile" +
             "       LEFT JOIN Game ON Game.player2=UserProfile.id" +
-            "       WHERE UserProfile.nick LIKE ? OFFSET " + from + " LIMIT " + count + ") AS s2 ON s1.userId = s2.userId" +
+            "       WHERE UserProfile.nick LIKE '" + query + "' OFFSET " + from + " LIMIT " + count + ") AS s2 ON s1.userId = s2.userId" +
             " ORDER BY s1.userId";
     DB.getInstance().query((rs) -> {
       List<UserElement> users = new ArrayList<>();
@@ -84,7 +72,19 @@ public class UserProfile extends AbstractEntity {
                 .build());
       ThreadUtil.ui(() -> handler.accept(users));
       rs.close();
-    }, cmd, query, query);
+    }, cmd);
+  }
+
+  public static void with(String nick, ErrorAcceptedConsumer<UserProfile> handler) {
+    DB.getInstance().query((rs) -> {
+      if (rs.next()) {
+        UserProfile profile = new UserProfile();
+        profile.load(rs);
+        ThreadUtil.ui(() -> handler.accept(profile));
+      } else
+        ThreadUtil.ui(() -> handler.accept(null));
+      rs.close();
+    }, "SELECT * FROM UserProfile WHERE nick=? ORDER BY id LIMIT 1", nick);
   }
 
   public void getPermissions(ErrorAcceptedConsumer<Set<String>> resultHandler) {

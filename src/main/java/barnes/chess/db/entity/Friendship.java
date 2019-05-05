@@ -22,7 +22,7 @@ public class Friendship extends DurationHolder {
     this.user2 = user2;
     Duration dur = new Duration(new Timestamp(System.currentTimeMillis()), new Timestamp(System.currentTimeMillis()));
     dur.insert(() -> {
-      duration = id;
+      duration = dur.id;
       ThreadUtil.async(() -> insert(onFinish));
     });
   }
