@@ -7,10 +7,13 @@ import javafx.geometry.VPos;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
+import javax.swing.text.TableView;
+
 public class FriendScreen extends AbstractScreen{
 
     private DashboardScreen dash;
     private UserProfile user;
+    private TableView table;
 
     public FriendScreen(DashboardScreen dash, Stage stage, UserProfile user){
         super(stage, user,dash);
