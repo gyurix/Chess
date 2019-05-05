@@ -3,10 +3,12 @@ package barnes.chess.db.stats;
 import barnes.chess.db.entity.Game;
 import barnes.chess.db.entity.SkipField;
 import barnes.chess.db.entity.WinnerType;
+import lombok.Getter;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Getter
 public class PlayedGame {
   @SkipField
   private Game game;
@@ -18,8 +20,8 @@ public class PlayedGame {
   public PlayedGame(ResultSet rs, boolean inverseWinnerType) throws SQLException {
     this(new Game(rs.getInt(1)),
             rs.getString(2),
-            rs.getTimestamp(3).toString(),
-            rs.getTimestamp(4).toString(),
+            rs.getTimestamp(3).toString().replaceAll("\\..+", ""),
+            rs.getTimestamp(4).toString().replaceAll("\\..+", ""),
             WinnerType.valueOf(rs.getString(5)),
             inverseWinnerType);
   }
@@ -30,9 +32,5 @@ public class PlayedGame {
     this.timeEnded = timeEnded;
     this.opponent = opponent;
     this.winner = inverseWinnerType ? winner.inverse() : winner;
-  }
-
-  public void delete() {
-    game.delete();
   }
 }

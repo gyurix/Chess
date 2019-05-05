@@ -25,7 +25,6 @@ import static javafx.scene.control.Alert.AlertType.INFORMATION;
 public class UserProfileScreen extends AbstractScreen {
   private boolean editPerm;
   private TextField opponent, startTime, endTime;
-  private DashboardScreen parent;
   private TableView<PlayedGame> playedGames;
   private DatePicker start, end;
   private UserElement user;
@@ -65,6 +64,10 @@ public class UserProfileScreen extends AbstractScreen {
   }
 
   private void addGame(ActionEvent e) {
+    if (!editPerm) {
+      showAlert(ERROR, "No edit perm", "You don't have edit permission");
+      return;
+    }
     long startTime, endTime;
     try {
       startTime = getStartTime();
@@ -136,9 +139,15 @@ public class UserProfileScreen extends AbstractScreen {
       playedGames = createTableView(games);
       playedGames.setOnMouseClicked((e) -> {
         PlayedGame g = playedGames.getSelectionModel().getSelectedItem();
-        if (g != null && editPerm && e.getButton() == MouseButton.SECONDARY) {
-          g.delete();
-          updatePlayedGames();
+        if (g != null && e.getButton() == MouseButton.SECONDARY) {
+          if (!editPerm) {
+            showAlert(ERROR, "No edit perm", "You don't have edit permission");
+            return;
+          }
+          g.getGame().delete((succeed) -> {
+            updatePlayedGames();
+            showAlert(INFORMATION, "Removed game", "Removed the selected played game");
+          });
         }
       });
       grid.add(playedGames, 1, 1, 7, 1);

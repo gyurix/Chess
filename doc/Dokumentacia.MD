@@ -52,19 +52,55 @@ Administrátor taktiež má možnosť pozrieť všetkých použivatelov, ich ran
 
 Tento scenár je určený pre administrátora. V tomto prípade administrator mení rolu použivateľov,
 t.j. administrátor nastavuje ďalších administrátorov alebo ich vracia do obyčajných využivateľov systému.
-Administrátor má zoznám všetkých hračov - ich prihlasovacie meno, a pri tom rolu, ktoru oni odohrávajú v systéme.  
+Administrátor má zoznám všetkých hračov - ich prihlasovacie meno, a pri tom rolu, ktoru oni odohrávajú v systéme.
+  
 
 ## 4. Prehľadávateľný zoznam hier, na ktorých používateľ participoval
 
-Použivateľ bude moc pozrieť zoznam svojích hier, ktoré hrával.
+Keď používateľ klikne pravím tlačidkom na meno hráča v zozname hráčou môže kliknúť na profile v menu, aby mu
+ukázal nasledújuce okno:
 
-Každý zoznam obsahuje:
-- použivatelské mena dvoch hračov, ktoré sa zučastnili v partie
-- výsledok - 1-0, 1/2 alebo 0-1
+![GameList](https://github.com/fiit-dbs-2019/dbs2019-project-assignment-barath-nestorenko/raw/master/doc/img/GameList.png)
+ 
+
+Okno obsahuje zoznam každej hry, ktorý vybraný používateľ hral.
+ 
+**Každá hra má záznam obsahujúce nasledovné informácie:**
+- použivatelské meno druhého hráča, ktoré sa zučastnili v partie
+- výsledok: `P1` (prihlásený používatel vyhral), `P2` (oponent vyhral), `DRAW` (bola remíza)
 - čas, kedy bola hra začatá a ukončená
-- administrátoria vedia pridávať hry
+- moderátori a administrátoria vedia pridávať, ako aj odstrániť hry
+
+**Pri pridaní nových hier, administrátoria a moderátori vedia nastaviť nasledovné atribúty:**
+- používatelské meno oponenta
+- dátum začiatku hru
+- čas začiatku hru
+- dátum konci hru
+- čas konci hru
+- víťazec hru
 
 ## 5. Priateľský systém
+
+S priateľským systémom sme pridali možnosť pridania a odstránenia priateľov.
+
+![FriendList](https://github.com/fiit-dbs-2019/dbs2019-project-assignment-barath-nestorenko/raw/master/doc/img/FriendList.png)
+
+**Pridanie priateľou:**
+1. Vyhľadáme používatelské meno pridateľného priatelovi
+2. Klikneme na ňu pravým tlačitkom
+3. Klikneme na `Add friend` tlačítko
+![AddFriend](https://github.com/fiit-dbs-2019/dbs2019-project-assignment-barath-nestorenko/raw/master/doc/img/AddFriend.png)
+
+**Odstránenie priateľou:**
+1. Klikneme na tlačítko `friends`
+2. Klikneme pravím tlačítkom na používatelské meno odstrániteľného priateľa
+![RemoveFriend](https://github.com/fiit-dbs-2019/dbs2019-project-assignment-barath-nestorenko/raw/master/doc/img/RemoveFriend.png)
+
+**Zobrazenie priateľou iných hráčov:**
+1. Vyhľadáme používatelské meno hráča, ktorého priateľovi chceme pozrieť 
+2. Klikneme na ňu pravým tlačitkom
+3. Klikneme na `Friends` tlačítko
+![FriendListOthers](https://github.com/fiit-dbs-2019/dbs2019-project-assignment-barath-nestorenko/raw/master/doc/img/FriendListOthers.png)
 
 
 # Dátový model

@@ -19,11 +19,7 @@ public class FriendshipInfo {
     friendship = new Friendship();
     friendship.load(rs);
     name = rs.getString(5);
-    since = rs.getTimestamp(6).toString();
-    until = rs.getTimestamp(7).toString();
-  }
-
-  public void delete() {
-    friendship.delete();
+    since = rs.getTimestamp(6).toString().replaceAll("\\..+", "");
+    until = rs.getTimestamp(7).toString().replaceAll("\\..+", "");
   }
 }

@@ -1,6 +1,7 @@
 package barnes.chess.db.entity;
 
 import barnes.chess.db.DB;
+import barnes.chess.utils.ErrorAcceptedConsumer;
 import barnes.chess.utils.ErrorAcceptedRunnable;
 import barnes.chess.utils.ThreadUtil;
 import lombok.Getter;
@@ -21,10 +22,10 @@ public abstract class AbstractEntity {
     initFields();
   }
 
-  public void delete() {
+  public void delete(ErrorAcceptedConsumer<Boolean> resultHandler) {
     if (id == 0)
       throw new RuntimeException("This " + getTable() + " instance is not registered in the database");
-    DB.getInstance().command("DELETE FROM " + getTable() + " WHERE id = ?", id);
+    DB.getInstance().command(resultHandler, "DELETE FROM " + getTable() + " WHERE id = ?", id);
   }
 
   private Object[] getFieldValues() {

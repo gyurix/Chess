@@ -3,6 +3,7 @@ package barnes.chess.gui.screens;
 import barnes.chess.db.entity.Friendship;
 import barnes.chess.db.stats.FriendshipInfo;
 import barnes.chess.db.stats.UserElement;
+import barnes.chess.utils.ThreadUtil;
 import javafx.geometry.VPos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TableView;
@@ -43,23 +44,26 @@ public class FriendScreen extends AbstractScreen {
     Friendship.getAll(Integer.valueOf(ue.getId().trim()), (friends) -> {
       friendsTable = createTableView(friends);
       grid.add(friendsTable, 1, 1);
+      System.out.println("Loaded friends table.");
       friendsTable.setOnMouseClicked((e) -> {
-        if (e.getButton() == MouseButton.SECONDARY) {
-          FriendshipInfo info = friendsTable.getSelectionModel().getSelectedItem();
-          if (info != null) {
-            if (removePerm) {
-              info.delete();
-              Friendship.getAll(Integer.valueOf(ue.getId().trim()), (friends2) -> {
-                List<FriendshipInfo> list = friendsTable.getItems();
-                list.clear();
-                list.addAll(friends2);
-              });
-              showAlert(Alert.AlertType.INFORMATION, "Deleted friend", "Delete friend " + info.getName());
-            } else {
-              showAlert(Alert.AlertType.ERROR, "No perm", "You don't have permission for removing other players friends");
-            }
-          }
-        }
+        if (e.getButton() != MouseButton.SECONDARY)
+          return;
+
+        FriendshipInfo info = friendsTable.getSelectionModel().getSelectedItem();
+        if (info == null)
+          return;
+
+        if (!removePerm)
+          showAlert(Alert.AlertType.ERROR, "No perm", "You don't have permission for removing other players friends");
+
+        info.getFriendship().delete((succeed) -> ThreadUtil.ui(() -> {
+          Friendship.getAll(Integer.valueOf(ue.getId().trim()), (friends2) -> {
+            List<FriendshipInfo> list = friendsTable.getItems();
+            list.clear();
+            list.addAll(friends2);
+          });
+          showAlert(Alert.AlertType.INFORMATION, "Deleted friend", "Delete friend " + info.getName());
+        }));
       });
     });
   }
