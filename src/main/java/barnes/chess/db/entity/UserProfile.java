@@ -11,7 +11,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static barnes.chess.utils.HashUtils.HashType.SHA_256;
 import static barnes.chess.utils.HashUtils.hash;
@@ -67,7 +69,6 @@ public class UserProfile extends AbstractEntity {
             "       LEFT JOIN Game ON Game.player2=UserProfile.id" +
             "       WHERE UserProfile.nick LIKE ? OFFSET " + from + " LIMIT " + count + ") AS s2 ON s1.userId = s2.userId" +
             " ORDER BY s1.userId";
-    System.out.println("Command: " + cmd);
     DB.getInstance().query((rs) -> {
       List<UserElement> users = new ArrayList<>();
       while (rs.next())
@@ -84,5 +85,16 @@ public class UserProfile extends AbstractEntity {
       ThreadUtil.ui(() -> handler.accept(users));
       rs.close();
     }, cmd, query, query);
+  }
+
+  public void getPermissions(ErrorAcceptedConsumer<Set<String>> resultHandler) {
+    DB.getInstance().query((rs) -> {
+      Set<String> perms = new HashSet<>();
+      while (rs.next()) {
+        perms.add(rs.getString(1));
+      }
+      rs.close();
+      resultHandler.accept(perms);
+    }, "SELECT name FROM Permission WHERE rank=?", rank);
   }
 }

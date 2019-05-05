@@ -1,5 +1,6 @@
 package barnes.chess.gui.screens;
 
+import barnes.chess.db.entity.Friendship;
 import barnes.chess.db.entity.Game;
 import barnes.chess.db.entity.Rank;
 import barnes.chess.db.entity.UserProfile;
@@ -17,28 +18,32 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import lombok.Getter;
 
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.*;
 
 import static barnes.chess.db.stats.CollectionInterval.*;
+import static javafx.scene.control.Alert.AlertType.INFORMATION;
 
 public class DashboardScreen extends AbstractScreen {
+  private boolean canEditRanks;
+  private Button friendListShow;
   private List<Rank> ranks;
-  private UserElement selectedUser;
+  private Set<String> permissions = new HashSet<>();
   private EnumMap<CollectionInterval, TableView<Object>> statTables = new EnumMap<>(CollectionInterval.class);
   private DatePicker statViewDatePicker;
   private Label statsLabel;
   private UserProfile user;
-  private boolean canEditRanks;
   private int userPage;
   private TextField userSearchField;
   private Label userSelectorLabel;
-  private TableView userTable;
+  @Getter
+  private UserElement selectedUser;
   private Button usersNextPage;
   private Button usersPrevPage;
-  private Button friendListShow;
+  private TableView<UserElement> userTable;
 
   public DashboardScreen(Stage stage, UserProfile user) {
     super(stage, user);
@@ -46,6 +51,7 @@ public class DashboardScreen extends AbstractScreen {
 
   @Override
   protected void addComponentsToGrid() {
+    user.getPermissions((perms) -> permissions = perms);
     grid.add(statsLabel, 3, 0, 2, 1);
     initStats(DAILY, 3, 3);
     initStats(WEEKLY, 4, 3);
@@ -134,6 +140,17 @@ public class DashboardScreen extends AbstractScreen {
     });
   }
 
+  private MenuItem createMenuItem(String text, Runnable onClick) {
+    MenuItem menuItem = new MenuItem(text);
+    menuItem.setOnAction((e) -> onClick.run());
+    return menuItem;
+  }
+
+  private void friendShowButtonClick(Object o) {
+    new FriendScreen(UserElement.builder().id(String.valueOf(user.getId())).build(), true);
+    showAlert(INFORMATION, "Loading friends...", "Loading the list of your friends");
+  }
+
   public void initStats(CollectionInterval interval, int col, int row) {
     withStatsTable(interval, (t) -> {
       statTables.put(interval, t);
@@ -142,46 +159,22 @@ public class DashboardScreen extends AbstractScreen {
     });
   }
 
-  private MenuItem createMenuItem(String text, Runnable onClick) {
-    MenuItem menuItem = new MenuItem(text);
-    menuItem.setOnAction((e) -> onClick.run());
-    return menuItem;
-  }
-
-  private void friendShowButtonClick(Object o) {
-    System.out.println("Waiting for opening Friends Screen...");
-    new FriendScreen(this, stage, user);
-  }
-
   public void initUsers() {
     UserProfile.getAll((users) -> {
       userTable = createTableView(users);
       userTable.setOnMouseClicked(e -> {
-        UserElement ue = (UserElement) userTable.getSelectionModel().getSelectedItem();
-        if (ue == null) {
+        UserElement ue = userTable.getSelectionModel().getSelectedItem();
+        if (ue == null)
           return;
-        }
-        updateStatsTable(Integer.valueOf(ue.getId().trim()), ue.getName(), statViewDatePicker.getValue());
-        if (e.getButton() == MouseButton.SECONDARY) {
+        selectedUser = ue;
+        if (e.getButton() == MouseButton.SECONDARY)
           showContextMenu(e, ue);
+        else {
+          updateStatsTable(Integer.valueOf(ue.getId().trim()), ue.getName(), statViewDatePicker.getValue());
         }
       });
       grid.add(userTable, 1, 2, 2, 4);
     }, "", 0, 20);
-  }
-
-  private void showContextMenu(MouseEvent event, UserElement ue) {
-    ContextMenu contextMenu = new ContextMenu();
-    List<MenuItem> items = contextMenu.getItems();
-    if (canEditRanks && Integer.valueOf(ue.getId().trim()) != user.getId()) {
-      items.add(createMenuItem("Change rank", () -> {
-        ue.updateRank(ue.getRankId() % ranks.size() + 1, (c) -> {
-          if (c > 0)
-            ThreadUtil.ui(this::updateUsers);
-        });
-      }));
-    }
-    contextMenu.show(userTable, event.getScreenX(), event.getScreenY());
   }
 
   private void nextButtonClick(Object o) {
@@ -193,7 +186,6 @@ public class DashboardScreen extends AbstractScreen {
     }
   }
 
-
   private void previousButtonClick(Object o) {
     if (userTable == null)
       return;
@@ -203,7 +195,31 @@ public class DashboardScreen extends AbstractScreen {
     }
   }
 
+  private void showContextMenu(MouseEvent event, UserElement ue) {
+    ContextMenu contextMenu = new ContextMenu();
+    List<MenuItem> items = contextMenu.getItems();
+    if (canEditRanks && Integer.valueOf(ue.getId().trim()) != user.getId()) {
+      if (permissions.contains("viewprofile"))
+        items.add(createMenuItem("Profile",
+                () -> new UserProfileScreen(new Stage(), Integer.valueOf(ue.getId().trim()), this)));
+      items.add(createMenuItem("Friends",
+              () -> new FriendScreen(ue, false)));
+      items.add(createMenuItem("Add as friend",
+              () -> new Friendship(user.getId(), Integer.valueOf(selectedUser.getId().trim()),
+                      () -> showAlert(INFORMATION, "Added friend", "Added friend " + ue.getName()))));
+      if (permissions.contains("changerank"))
+        items.add(createMenuItem("Change rank", () ->
+                ue.updateRank(ue.getRankId() % ranks.size() + 1, (c) -> {
+                  if (c > 0)
+                    ThreadUtil.ui(this::updateUsers);
+                })));
+    }
+    contextMenu.show(userTable, event.getScreenX(), event.getScreenY());
+  }
+
   public void updateStatsTable(int userId, String userName, LocalDate date) {
+    if (statTables.size() != 4)
+      return;
     Calendar cal = GregorianCalendar.getInstance();
     //noinspection MagicConstant
     cal.set(date.getYear(), date.getMonthValue() - 1, date.getDayOfWeek().ordinal());
@@ -219,10 +235,8 @@ public class DashboardScreen extends AbstractScreen {
   }
 
   public void updateUsers() {
-    System.out.println("Update users");
-    UserProfile.getAll((users) -> {
-      userTable.setItems(new ObservableListWrapper(users));
-    }, userSearchField.getText(), (userPage - 1) * 20, 20);
+    UserProfile.getAll((users) -> userTable.setItems(new ObservableListWrapper<>(users)), userSearchField.getText(),
+            (userPage - 1) * 20, 20);
   }
 
   public void withStatsTable(CollectionInterval interval, ErrorAcceptedConsumer<TableView> consumer) {

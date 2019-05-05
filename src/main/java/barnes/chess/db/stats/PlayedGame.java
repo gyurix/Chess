@@ -8,11 +8,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class PlayedGame {
-  private String endTime;
   @SkipField
   private Game game;
   private String opponent;
-  private String startTime;
+  private String timeEnded;
+  private String timeStarted;
   private WinnerType winner;
 
   public PlayedGame(ResultSet rs, boolean inverseWinnerType) throws SQLException {
@@ -24,10 +24,10 @@ public class PlayedGame {
             inverseWinnerType);
   }
 
-  public PlayedGame(Game game, String opponent, String startTime, String endTime, WinnerType winner, boolean inverseWinnerType) {
+  public PlayedGame(Game game, String opponent, String timeStarted, String timeEnded, WinnerType winner, boolean inverseWinnerType) {
     this.game = game;
-    this.startTime = startTime;
-    this.endTime = endTime;
+    this.timeStarted = timeStarted;
+    this.timeEnded = timeEnded;
     this.opponent = opponent;
     this.winner = inverseWinnerType ? winner.inverse() : winner;
   }

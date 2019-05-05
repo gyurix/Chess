@@ -3,18 +3,22 @@ package barnes.chess.gui.screens;
 import barnes.chess.db.entity.Game;
 import barnes.chess.db.entity.UserProfile;
 import barnes.chess.db.entity.WinnerType;
-import barnes.chess.db.stats.CollectionInterval;
 import barnes.chess.db.stats.PlayedGame;
 import javafx.event.ActionEvent;
-import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+
+import static javafx.scene.control.Alert.AlertType.ERROR;
+import static javafx.scene.control.Alert.AlertType.INFORMATION;
 
 public class UserProfileScreen extends AbstractScreen {
   private TextField opponent, startTime, endTime;
@@ -32,28 +36,35 @@ public class UserProfileScreen extends AbstractScreen {
   protected void addComponentsToGrid() {
     start = createDatePicker();
     end = createDatePicker();
-    grid.add(createBoldLabel("Opponent", 16), 1, 2);
-    grid.add(createBoldLabel("Start Date", 16), 2, 2);
-    grid.add(createBoldLabel("Start Time", 16), 2, 2);
-    grid.add(createBoldLabel("End Date", 16), 3, 2);
-    grid.add(createBoldLabel("End Time", 16), 3, 2);
-    grid.add(createBoldLabel("Winner", 16), 4, 2);
-    grid.add(createButton("Add game", this::addGame), 5, 2);
+    grid.add(createLabel("Opponent", 12), 1, 2);
+    grid.add(createLabel("Start Date", 12), 2, 2);
+    grid.add(createLabel("Start Time", 12), 3, 2);
+    grid.add(createLabel("End Date", 12), 4, 2);
+    grid.add(createLabel("End Time", 12), 5, 2);
+    grid.add(createLabel("Winner", 12), 6, 2);
+    grid.add(opponent = createTextField(14), 1, 3);
+    grid.add(start = createDatePicker(), 2, 3);
+    grid.add(startTime = createTextField(14), 3, 3);
+    grid.add(end = createDatePicker(), 4, 3);
+    grid.add(endTime = createTextField(14), 5, 3);
+    grid.add(winnerType = createComboBox(WinnerType.class), 6, 3);
+    grid.add(createButton("Add game", this::addGame), 7, 3);
   }
 
   @Override
   protected int getHeight() {
-    return 480;
+    return 715;
   }
 
   @Override
   protected int getWidth() {
-    return 640;
+    return 920;
   }
 
   @Override
   protected void initComponents() {
-    Game.getGames(userId, CollectionInterval.OVERALL, new Date(System.currentTimeMillis()), (games) -> {
+    title = "Chess Stats - Profile of user " + parent.getSelectedUser().getName();
+    Game.getPlayedGames(userId, (games) -> {
       playedGames = createTableView(games);
       playedGames.setOnMouseClicked((e) -> {
         PlayedGame g = playedGames.getSelectionModel().getSelectedItem();
@@ -62,30 +73,31 @@ public class UserProfileScreen extends AbstractScreen {
           updatePlayedGames();
         }
       });
-      grid.add(playedGames, 1, 1, 5, 1);
+      grid.add(playedGames, 1, 1, 7, 1);
     });
 
   }
 
   @Override
   protected void initGrid() {
+    grid.setHgap(5);
     grid.getRowConstraints().addAll(
-            row(10),
-            row(70),
-            row(7),
+            row(5),
+            row(79),
+            row(3),
             row(8),
-            row(10)
+            row(5)
     );
     grid.getColumnConstraints().addAll(
-            col(10),
-            col(11),
-            col(11),
-            col(12),
-            col(11),
-            col(12),
-            col(11),
-            col(12),
-            col(10)
+            col(4.5),
+            col(13),
+            col(13),
+            col(13),
+            col(13),
+            col(13),
+            col(13),
+            col(13),
+            col(4.5)
     );
   }
 
@@ -102,7 +114,6 @@ public class UserProfileScreen extends AbstractScreen {
 
   @Override
   protected void populateComponents() {
-
   }
 
   @Override
@@ -115,13 +126,13 @@ public class UserProfileScreen extends AbstractScreen {
     try {
       startTime = getStartTime();
     } catch (Throwable err) {
-      showAlert(Alert.AlertType.ERROR, "Invalid start time", "The entered start time is invalid");
+      showAlert(ERROR, "Invalid start time", "The entered start time is invalid");
       return;
     }
     try {
       endTime = getEndTime();
     } catch (Throwable err) {
-      showAlert(Alert.AlertType.ERROR, "Invalid start time", "The entered end time is invalid");
+      showAlert(ERROR, "Invalid start time", "The entered end time is invalid");
       return;
     }
     if (start.getValue().compareTo(end.getValue()) > 0) {
@@ -143,13 +154,19 @@ public class UserProfileScreen extends AbstractScreen {
     long finalEndTime = endTime;
     UserProfile.with(opponent.getText(), (u) -> {
       if (u == null) {
-        showAlert(Alert.AlertType.ERROR, "Player not found", "Player " + opponent.getText() + " was not found.");
+        showAlert(ERROR, "Player not found", "Player " + opponent.getText() + " was not found.");
         return;
       }
       new Game(userId, u.getId(), winnerType.getValue(), finalStartTime, finalEndTime,
-              () -> showAlert(Alert.AlertType.INFORMATION, "Added game", "Added game to the database"));
+              () -> showAlert(INFORMATION, "Added game", "Added game to the database"));
 
     });
+  }
+
+  private <T extends Enum<T>> ComboBox<T> createComboBox(Class<T> cl) {
+    ComboBox<T> out = new ComboBox<>();
+    out.getItems().addAll(cl.getEnumConstants());
+    return out;
   }
 
   private long getEndTime() {

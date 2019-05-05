@@ -125,8 +125,8 @@ public abstract class AbstractScreen {
     return out;
   }
 
-  public TableColumn<Object, Object> createTableCol(String name, ErrorAcceptedFunction<Object, Object> dataGenerator) {
-    TableColumn<Object, Object> col = new TableColumn<>(name);
+  public <T> TableColumn<T, Object> createTableCol(String name, ErrorAcceptedFunction<T, Object> dataGenerator) {
+    TableColumn<T, Object> col = new TableColumn<>(name);
     col.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(dataGenerator.toFunction().apply(c.getValue())));
     //noinspection unchecked
     col.setComparator((o1, o2) -> o1 instanceof Comparable ? ((Comparable) o1).compareTo(o2) : String.valueOf(o1).compareTo(String.valueOf(o2)));
@@ -134,12 +134,12 @@ public abstract class AbstractScreen {
     return col;
   }
 
-  public TableView createTableView(List data) {
-    TableView<Object> out = new TableView<>();
+  public <T> TableView<T> createTableView(List<T> data) {
+    TableView<T> out = new TableView<>();
     out.setEditable(false);
     if (data != null && !data.isEmpty()) {
-      ObservableList<TableColumn<Object, ?>> columns = out.getColumns();
-      out.setItems(new ObservableListWrapper(data));
+      ObservableList<TableColumn<T, ?>> columns = out.getColumns();
+      out.setItems(new ObservableListWrapper<>(data));
       Object o = data.get(0);
       Class cl = o.getClass();
       for (Field f : cl.getDeclaredFields()) {
