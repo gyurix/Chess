@@ -36,6 +36,8 @@ public class DB {
     try {
       if (connection != null && connection.isValid(config.getTimeout()))
         return connection;
+      String check = "jdbc:postgresql://" + config.getHost() + ":" + config.getPort() + "/" + config.getDatabase();
+      System.out.println(check);
       connection = DriverManager.getConnection("jdbc:postgresql://" +
                       config.getHost() + ":" + config.getPort() + "/" + config.getDatabase(),
               config.getUsername(), config.getPassword());
@@ -65,6 +67,10 @@ public class DB {
     async(() -> resultHandler.accept(prepare(query, data).executeQuery()));
   }
 
+  public void query2(ErrorAcceptedConsumer<ResultSet> resultHandler, String query, Object... data) {
+    async(() -> resultHandler.accept(prepare(query, data).executeQuery()));
+  }
+
   public void update(String query, Object... data) {
     async(() -> prepare(query, data).executeUpdate());
   }
@@ -82,4 +88,6 @@ public class DB {
       }
     });
   }
+
+
 }

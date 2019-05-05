@@ -1,11 +1,5 @@
 package barnes.chess.db.stats;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import barnes.chess.db.entity.Friendship;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.StringProperty;
-
 public class FriendList {
 
     private final Integer userId;
@@ -14,6 +8,12 @@ public class FriendList {
 
     public FriendList(){
         this(0, 0, null);
+    }
+
+    public FriendList(String friendName) {
+        this.userId = 0;
+        this.friendId = 0;
+        this.friendName = friendName;
     }
 
     public FriendList(Integer userId, Integer friendId, String friendName){

@@ -1,9 +1,10 @@
 package barnes.chess.gui.screens;
 
 import barnes.chess.db.entity.UserProfile;
+import barnes.chess.db.stats.FriendList;
 import barnes.chess.utils.ThreadUtil;
-import javafx.geometry.HPos;
-import javafx.geometry.VPos;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -13,7 +14,8 @@ public class FriendScreen extends AbstractScreen{
 
     private DashboardScreen dash;
     private UserProfile user;
-    private TableView table;
+    TableView table;
+    TableColumn<String, FriendList> column1;
 
     public FriendScreen(DashboardScreen dash, Stage stage, UserProfile user){
         super(stage, user,dash);
@@ -59,8 +61,11 @@ public class FriendScreen extends AbstractScreen{
 
     @Override
     protected void initComponents() {
+        column1 = new TableColumn<>("Nick");
+        column1.setCellValueFactory(new PropertyValueFactory<>("nick"));
 
     }
+
 
     @Override
     protected void initGrid() {
